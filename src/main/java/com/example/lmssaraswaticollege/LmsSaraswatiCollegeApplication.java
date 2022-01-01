@@ -2,6 +2,8 @@ package com.example.lmssaraswaticollege;
 
 import com.example.lmssaraswaticollege.books.BookService;
 import com.example.lmssaraswaticollege.books.Books;
+import com.example.lmssaraswaticollege.issue.Issue;
+import com.example.lmssaraswaticollege.issue.IssueService;
 import com.example.lmssaraswaticollege.user.Role;
 import com.example.lmssaraswaticollege.user.User;
 import com.example.lmssaraswaticollege.user.UserService;
@@ -18,12 +20,14 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
 
     private final UserService userService;
     private final BookService bookService;
+    private final IssueService issueService;
 
     String[] options = {"Select Role", "ADMIN", "TEACHER", "STUDENT"};
 
-    public LmsSaraswatiCollegeApplication(UserService userService, BookService bookService) {
+    public LmsSaraswatiCollegeApplication(UserService userService, BookService bookService, IssueService issueService) {
         this.userService = userService;
         this.bookService = bookService;
+        this.issueService = issueService;
         login();
     }
 
@@ -132,7 +136,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         JFrame f = new JFrame("Admin Functions");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-
+        //Complete
         JButton view_but=new JButton("View Books");
         view_but.setBounds(20,20,120,25);
         view_but.addActionListener(e -> {
@@ -295,7 +299,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
 
         });
 
-
+        //Complete
         JButton add_book=new JButton("Add Book");
         add_book.setBounds(150,60,120,25);
         add_book.addActionListener(e -> {
@@ -303,29 +307,29 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
             JFrame g = new JFrame("Enter Book Details");
 
             JLabel l1,l2,l3, l4, l5, l6, l7, l8;
-            l1=new JLabel("Accession Id");  //lebel 1 for book name
-            l1.setBounds(30,15, 100,30);
+            l1=new JLabel("Accession Id");
+            l1.setBounds(30,15, 115,30);
 
-            l2 = new JLabel("Book Name");  //label 2 for genre
-            l2.setBounds(30,50, 100,30);
+            l2 = new JLabel("Book Name");
+            l2.setBounds(30,50, 115,30);
 
             l3 = new JLabel("Author Name");
-            l3.setBounds(30, 85, 100, 30);
+            l3.setBounds(30, 85, 115, 30);
 
-            l4 = new JLabel("Year Published");  //label 2 for price
-            l4.setBounds(30,120, 100,30);
+            l4 = new JLabel("Year Published");
+            l4.setBounds(30,120, 115,30);
 
-            l5 = new JLabel("Abscission Id");  //label 2 for price
-            l5.setBounds(30,155, 100,30);
+            l5 = new JLabel("Abscission Id");
+            l5.setBounds(30,155, 115,30);
 
-            l6 = new JLabel("Pages");  //label 2 for price
-            l6.setBounds(30,190, 100,30);
+            l6 = new JLabel("Pages");
+            l6.setBounds(30,190, 115,30);
 
             l7 = new JLabel("Language");
-            l7.setBounds(30,225, 100,30);
+            l7.setBounds(30,225, 115,30);
 
             l8 = new JLabel("Price");
-            l8.setBounds(30,260, 100,30);
+            l8.setBounds(30,260, 115,30);
 
             JTextField F_acId = new JTextField();
             F_acId.setBounds(110, 15, 200, 30);
@@ -354,12 +358,24 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
             JButton create_but=new JButton("Submit");
             create_but.setBounds(130,300,80,25);
             create_but.addActionListener(e12 -> {
+                String acId = F_acId.getText();
+                String bookName = F_book.getText();
+                String author = F_author.getText();
+                String published = F_published.getText();
+                String abId = F_abId.getText();
+                int pages = Integer.parseInt(F_pages.getText());
+                String lang = F_language.getText();
+                Double price = Double.parseDouble(F_price.getText());
 
-                String bName = F_acId.getText();
-                String genre = F_book.getText();
-                String price = F_language.getText();
-
-                int price_int = Integer.parseInt(price);
+                if(bookService.addBook(new Books(acId, bookName, author, published, abId,
+                        pages, lang, price, false))) {
+                    JOptionPane.showMessageDialog(null, "Book Added to Database",
+                            "Success message", JOptionPane.INFORMATION_MESSAGE);
+                    g.dispose();
+                }
+                else
+                    JOptionPane.showMessageDialog(null, "Book Already Exists",
+                            "Error Message", JOptionPane.ERROR_MESSAGE);
             });
 
             g.add(l1);
@@ -381,9 +397,9 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
             g.add(F_abId);
 
             g.add(create_but);
-            g.setSize(500,500);//400 width and 500 height
-            g.setLayout(null);//using no layout managers
-            g.setVisible(true);//making the frame visible
+            g.setSize(600,600);
+            g.setLayout(null);
+            g.setVisible(true);
             g.setLocationRelativeTo(null);
 
         });
@@ -392,79 +408,44 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         JButton issue_book=new JButton("Issue Book");
         issue_book.setBounds(450,20,120,25);
         issue_book.addActionListener(e -> {
-            //enter details
             JFrame g = new JFrame("Enter Details");
-            //g.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            //create labels
-            JLabel l1,l2,l3,l4;
-            l1=new JLabel("Book ID(BID)");  // Label 1 for Book ID
+
+            JLabel l1;
+            l1=new JLabel("Accession ID");
             l1.setBounds(30,15, 100,30);
-
-
-            l2=new JLabel("User ID(UID)");  //Label 2 for user ID
-            l2.setBounds(30,53, 100,30);
-
-            l3=new JLabel("Period(days)");  //Label 3 for period
-            l3.setBounds(30,90, 100,30);
-
-            l4=new JLabel("Issued Date(DD-MM-YYYY)");  //Label 4 for issue date
-            l4.setBounds(30,127, 150,30);
 
             JTextField F_bid = new JTextField();
             F_bid.setBounds(110, 15, 200, 30);
 
+            JButton create_but=new JButton("Submit");
+            create_but.setBounds(130,170,80,25);
+            create_but.addActionListener(e13 -> {
 
-            JTextField F_uid=new JTextField();
-            F_uid.setBounds(110, 53, 200, 30);
+                String bid = F_bid.getText();
 
-            JTextField F_period=new JTextField();
-            F_period.setBounds(110, 90, 200, 30);
-
-            JTextField F_issue=new JTextField();
-            F_issue.setBounds(180, 130, 130, 30);
-
-
-            JButton create_but=new JButton("Submit");//creating instance of JButton
-            create_but.setBounds(130,170,80,25);//x axis, y axis, width, height
-            create_but.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e){
-
-                    String uid = F_uid.getText();
-                    String bid = F_bid.getText();
-                    String period = F_period.getText();
-                    String issued_date = F_issue.getText();
-
-                    int period_int = Integer.parseInt(period);
-
-                    /*Connection connection = connect();
-
-                    try {
-                        Statement stmt = connection.createStatement();
-                        stmt.executeUpdate("USE LIBRARY");
-                        stmt.executeUpdate("INSERT INTO ISSUED(UID,BID,ISSUED_DATE,PERIOD) VALUES ('"+uid+"','"+bid+"','"+issued_date+"',"+period_int+")");
-                        JOptionPane.showMessageDialog(null,"Book Issued!");
-                        g.dispose();
-
-                    }
-
-                    catch (SQLException e1) {
-                        // TODO Auto-generated catch block
-                        JOptionPane.showMessageDialog(null, e1);
-                    }*/
-
+                if(issueService.issueBook(new Issue(bid))) {
+                    JOptionPane.showMessageDialog(null, "Book Issued",
+                            "Success Message", JOptionPane.INFORMATION_MESSAGE);
+                    g.dispose();
                 }
+                else
+                    JOptionPane.showMessageDialog(null, "The book is taken or not present",
+                            "Error Message", JOptionPane.ERROR_MESSAGE);
+
             });
 
 
-            g.add(l3);
-            g.add(l4);
+            g.add(F_bid);
             g.add(create_but);
             g.add(l1);
+
+            /*g.add(l3);
+            g.add(l4);
             g.add(l2);
             g.add(F_uid);
-            g.add(F_bid);
             g.add(F_period);
-            g.add(F_issue);
+            g.add(F_issue);*/
+
             g.setSize(350,250);//400 width and 500 height
             g.setLayout(null);//using no layout managers
             g.setVisible(true);//making the frame visible
@@ -499,81 +480,77 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
 
             JButton create_but = new JButton("Return");//creating instance of JButton to mention return date and calculate fine
             create_but.setBounds(130,170,80,25);
-            create_but.addActionListener(new ActionListener() {
+            create_but.addActionListener(e14 -> {
 
-                public void actionPerformed(ActionEvent e){
+                String iid = F_iid.getText();
+                String return_date = F_return.getText();
 
-                    String iid = F_iid.getText();
-                    String return_date = F_return.getText();
+                /*Connection connection = connect();
 
-                    /*Connection connection = connect();
+                try {
+                    Statement stmt = connection.createStatement();
+                    stmt.executeUpdate("USE LIBRARY");
+                    //Intialize date1 with NULL value
+                    String date1=null;
+                    String date2=return_date; //Intialize date2 with return date
 
-                    try {
-                        Statement stmt = connection.createStatement();
-                        stmt.executeUpdate("USE LIBRARY");
-                        //Intialize date1 with NULL value
-                        String date1=null;
-                        String date2=return_date; //Intialize date2 with return date
-
-                        //select issue date
-                        ResultSet rs = stmt.executeQuery("SELECT ISSUED_DATE FROM ISSUED WHERE IID="+iid);
-                        while (rs.next()) {
-                            date1 = rs.getString(1);
-
-                        }
-
-                        try {
-                            Date date_1=new SimpleDateFormat("dd-MM-yyyy").parse(date1);
-                            Date date_2=new SimpleDateFormat("dd-MM-yyyy").parse(date2);
-                            //subtract the dates and store in diff
-                            long diff = date_2.getTime() - date_1.getTime();
-                            //Convert diff from milliseconds to days
-                            ex.days=(int)(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS));
-
-
-                        } catch (ParseException e1) {
-                            // TODO Auto-generated catch block
-                            e1.printStackTrace();
-                        }
-
-
-                        //update return date
-                        stmt.executeUpdate("UPDATE ISSUED SET RETURN_DATE='"+return_date+"' WHERE IID="+iid);
-                        g.dispose();
-
-
-                        Connection connection1 = connect();
-                        Statement stmt1 = connection1.createStatement();
-                        stmt1.executeUpdate("USE LIBRARY");
-                        ResultSet rs1 = stmt1.executeQuery("SELECT PERIOD FROM ISSUED WHERE IID="+iid); //set period
-                        String diff=null;
-                        while (rs1.next()) {
-                            diff = rs1.getString(1);
-
-                        }
-                        int diff_int = Integer.parseInt(diff);
-                        if(ex.days&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;gt;diff_int) { //If number of days are more than the period then calculcate fine
-
-                            //System.out.println(ex.days);
-                            int fine = (ex.days-diff_int)*10; //fine for every day after the period is Rs 10.
-                            //update fine in the system
-                            stmt1.executeUpdate("UPDATE ISSUED SET FINE="+fine+" WHERE IID="+iid);
-                            String fine_str = ("Fine: Rs. "+fine);
-                            JOptionPane.showMessageDialog(null,fine_str);
-
-                        }
-
-                        JOptionPane.showMessageDialog(null,"Book Returned!");
+                    //select issue date
+                    ResultSet rs = stmt.executeQuery("SELECT ISSUED_DATE FROM ISSUED WHERE IID="+iid);
+                    while (rs.next()) {
+                        date1 = rs.getString(1);
 
                     }
 
+                    try {
+                        Date date_1=new SimpleDateFormat("dd-MM-yyyy").parse(date1);
+                        Date date_2=new SimpleDateFormat("dd-MM-yyyy").parse(date2);
+                        //subtract the dates and store in diff
+                        long diff = date_2.getTime() - date_1.getTime();
+                        //Convert diff from milliseconds to days
+                        ex.days=(int)(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS));
 
-                    catch (SQLException e1) {
+
+                    } catch (ParseException e1) {
                         // TODO Auto-generated catch block
-                        JOptionPane.showMessageDialog(null, e1);
-                    }*/
+                        e1.printStackTrace();
+                    }
+
+
+                    //update return date
+                    stmt.executeUpdate("UPDATE ISSUED SET RETURN_DATE='"+return_date+"' WHERE IID="+iid);
+                    g.dispose();
+
+
+                    Connection connection1 = connect();
+                    Statement stmt1 = connection1.createStatement();
+                    stmt1.executeUpdate("USE LIBRARY");
+                    ResultSet rs1 = stmt1.executeQuery("SELECT PERIOD FROM ISSUED WHERE IID="+iid); //set period
+                    String diff=null;
+                    while (rs1.next()) {
+                        diff = rs1.getString(1);
+
+                    }
+                    int diff_int = Integer.parseInt(diff);
+                    if(ex.days&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;gt;diff_int) { //If number of days are more than the period then calculcate fine
+
+                        //System.out.println(ex.days);
+                        int fine = (ex.days-diff_int)*10; //fine for every day after the period is Rs 10.
+                        //update fine in the system
+                        stmt1.executeUpdate("UPDATE ISSUED SET FINE="+fine+" WHERE IID="+iid);
+                        String fine_str = ("Fine: Rs. "+fine);
+                        JOptionPane.showMessageDialog(null,fine_str);
+
+                    }
+
+                    JOptionPane.showMessageDialog(null,"Book Returned!");
 
                 }
+
+
+                catch (SQLException e1) {
+                    // TODO Auto-generated catch block
+                    JOptionPane.showMessageDialog(null, e1);
+                }*/
 
             });
             g.add(l4);

@@ -16,7 +16,13 @@ public class BookService {
     }
 
     public boolean addBook(Books book){
+        boolean succ = bookRepository.findById(book.getAccNo()).isPresent();
 
-        return false;
+        if(succ)
+            return false;
+        else{
+            bookRepository.insert(book);
+            return true;
+        }
     }
 }
