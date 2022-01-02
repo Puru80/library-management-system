@@ -1,6 +1,9 @@
 package com.example.lmssaraswaticollege.books;
 
 import lombok.AllArgsConstructor;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,6 +13,7 @@ import java.util.List;
 public class BookService {
 
     private final BookRepository bookRepository;
+    private MongoTemplate mongoTemplate;
 
     public List<Books> getAllBooks(){
         return bookRepository.findAll();
@@ -24,5 +28,12 @@ public class BookService {
             bookRepository.insert(book);
             return true;
         }
+    }
+
+    public List<Books> getIssuedBooks(){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("issued").is(true));
+
+        return mongoTemplate.find(query, Books.class);
     }
 }

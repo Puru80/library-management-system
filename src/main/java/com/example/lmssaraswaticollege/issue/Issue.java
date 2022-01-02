@@ -1,9 +1,6 @@
 package com.example.lmssaraswaticollege.issue;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.FieldType;
 import org.springframework.data.mongodb.core.mapping.MongoId;
@@ -11,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 @Data
 @Document(collection = "issue")
 @AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 public class Issue {

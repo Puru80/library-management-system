@@ -12,8 +12,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 @SpringBootApplication
 public class LmsSaraswatiCollegeApplication extends JFrame {
@@ -23,6 +21,8 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
     private final IssueService issueService;
 
     String[] options = {"Select Role", "ADMIN", "TEACHER", "STUDENT"};
+    String[] columnNames = {"Accession No", "Name", "Author", "Published In", "Abscission No",
+            "Language", "Price"};
 
     public LmsSaraswatiCollegeApplication(UserService userService, BookService bookService, IssueService issueService) {
         this.userService = userService;
@@ -140,63 +140,16 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         JButton view_but=new JButton("View Books");
         view_but.setBounds(20,20,120,25);
         view_but.addActionListener(e -> {
+            JFrame f1 = new JFrame("Books Available");
+            createBookTable(f1, false);
+        });
 
-                JFrame f1 = new JFrame("Books Available");
-
-                JTable book_list= new JTable();
-                String[] columnNames = {"Accession No", "Name", "Author", "Published In", "Abscission No",
-                        "Language", "Price"};
-                DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-
-                for(Books books: bookService.getAllBooks()){
-                    String AccNo = books.getAccNo();
-                    String name = books.getBookName();
-                    String author = books.getAuthorName();
-                    String publishedIn = books.getYearOfPub();
-                    String abNo = books.getAbscissionNo();
-                    String language = books.getLanguage();
-                    Double price = books.getPrice();
-
-                    model.addRow(new Object[]{AccNo, name, author, publishedIn, abNo, language, price});
-                }
-
-                book_list.setModel(model);
-
-                JScrollPane scrollPane = new JScrollPane(book_list);
-
-                f1.add(scrollPane);
-                f1.setSize(800, 400); //set size for frame
-                f1.setVisible(true);
-                f1.setLocationRelativeTo(null);
-
-            });
-
+        //Complete
         JButton issued_but = new JButton("View Issued Books");
         issued_but.setBounds(280,20,160,25);
         issued_but.addActionListener(e -> {
-
             JFrame f13 = new JFrame("Users List");
-
-            /*Connection connection = connect();
-            String sql="select * from issued";
-            try {
-                Statement stmt = connection.createStatement();
-                stmt.executeUpdate("USE LIBRARY");
-                stmt=connection.createStatement();
-                ResultSet rs=stmt.executeQuery(sql);
-                JTable book_list= new JTable();
-                book_list.setModel(DbUtils.resultSetToTableModel(rs));
-
-                JScrollPane scrollPane = new JScrollPane(book_list);
-
-                f.add(scrollPane);
-                f.setSize(800, 400);
-                f.setVisible(true);
-                f.setLocationRelativeTo(null);
-            } catch (SQLException e1) {
-                JOptionPane.showMessageDialog(null, e1);
-            }*/
-
+            createBookTable(f13, true);
         });
 
         //Complete
@@ -404,7 +357,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
 
         });
 
-
+        //Complete
         JButton issue_book=new JButton("Issue Book");
         issue_book.setBounds(450,20,120,25);
         issue_book.addActionListener(e -> {
@@ -439,13 +392,6 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
             g.add(create_but);
             g.add(l1);
 
-            /*g.add(l3);
-            g.add(l4);
-            g.add(l2);
-            g.add(F_uid);
-            g.add(F_period);
-            g.add(F_issue);*/
-
             g.setSize(350,250);//400 width and 500 height
             g.setLayout(null);//using no layout managers
             g.setVisible(true);//making the frame visible
@@ -458,105 +404,33 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         JButton return_book=new JButton("Return Book");
         return_book.setBounds(280,60,160,25);
         return_book.addActionListener(e -> {
-
             JFrame g = new JFrame("Enter Details");
-            //g.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            //set labels
-            JLabel l1,l2,l3,l4;
-            l1=new JLabel("Issue ID(IID)");  //Label 1 for Issue ID
-            l1.setBounds(30,15, 100,30);
 
+            JLabel l1;
+            l1 = new JLabel("Accession ID");
+            l1.setBounds(30,50, 100,30);
 
-            l4=new JLabel("Return Date(DD-MM-YYYY)");
-            l4.setBounds(30,50, 150,30);
-
-            JTextField F_iid = new JTextField();
-            F_iid.setBounds(110, 15, 200, 30);
-
-
-            JTextField F_return=new JTextField();
+            JTextField F_return = new JTextField();
             F_return.setBounds(180, 50, 130, 30);
 
-
-            JButton create_but = new JButton("Return");//creating instance of JButton to mention return date and calculate fine
+            JButton create_but = new JButton("Return");
             create_but.setBounds(130,170,80,25);
             create_but.addActionListener(e14 -> {
+                String acID = F_return.getText();
 
-                String iid = F_iid.getText();
-                String return_date = F_return.getText();
-
-                /*Connection connection = connect();
-
-                try {
-                    Statement stmt = connection.createStatement();
-                    stmt.executeUpdate("USE LIBRARY");
-                    //Intialize date1 with NULL value
-                    String date1=null;
-                    String date2=return_date; //Intialize date2 with return date
-
-                    //select issue date
-                    ResultSet rs = stmt.executeQuery("SELECT ISSUED_DATE FROM ISSUED WHERE IID="+iid);
-                    while (rs.next()) {
-                        date1 = rs.getString(1);
-
-                    }
-
-                    try {
-                        Date date_1=new SimpleDateFormat("dd-MM-yyyy").parse(date1);
-                        Date date_2=new SimpleDateFormat("dd-MM-yyyy").parse(date2);
-                        //subtract the dates and store in diff
-                        long diff = date_2.getTime() - date_1.getTime();
-                        //Convert diff from milliseconds to days
-                        ex.days=(int)(TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS));
-
-
-                    } catch (ParseException e1) {
-                        // TODO Auto-generated catch block
-                        e1.printStackTrace();
-                    }
-
-
-                    //update return date
-                    stmt.executeUpdate("UPDATE ISSUED SET RETURN_DATE='"+return_date+"' WHERE IID="+iid);
+                if(issueService.returnBook(acID)) {
+                    JOptionPane.showMessageDialog(null, "Book Returned",
+                            "Message", JOptionPane.INFORMATION_MESSAGE);
                     g.dispose();
-
-
-                    Connection connection1 = connect();
-                    Statement stmt1 = connection1.createStatement();
-                    stmt1.executeUpdate("USE LIBRARY");
-                    ResultSet rs1 = stmt1.executeQuery("SELECT PERIOD FROM ISSUED WHERE IID="+iid); //set period
-                    String diff=null;
-                    while (rs1.next()) {
-                        diff = rs1.getString(1);
-
-                    }
-                    int diff_int = Integer.parseInt(diff);
-                    if(ex.days&amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;amp;gt;diff_int) { //If number of days are more than the period then calculcate fine
-
-                        //System.out.println(ex.days);
-                        int fine = (ex.days-diff_int)*10; //fine for every day after the period is Rs 10.
-                        //update fine in the system
-                        stmt1.executeUpdate("UPDATE ISSUED SET FINE="+fine+" WHERE IID="+iid);
-                        String fine_str = ("Fine: Rs. "+fine);
-                        JOptionPane.showMessageDialog(null,fine_str);
-
-                    }
-
-                    JOptionPane.showMessageDialog(null,"Book Returned!");
-
                 }
-
-
-                catch (SQLException e1) {
-                    // TODO Auto-generated catch block
-                    JOptionPane.showMessageDialog(null, e1);
-                }*/
+                else
+                    JOptionPane.showMessageDialog(null, "Book Not Issued",
+                            "Message", JOptionPane.ERROR_MESSAGE);
 
             });
-            g.add(l4);
+
             g.add(create_but);
             g.add(l1);
-            g.add(F_iid);
             g.add(F_return);
             g.setSize(350,250);//400 width and 500 height
             g.setLayout(null);//using no layout managers
@@ -576,6 +450,42 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         f.setVisible(true);//making the frame visible
         f.setLocationRelativeTo(null);
 
+    }
+
+    private void createBookTable(JFrame f, Boolean issued){
+        JTable allBooks = new JTable();
+        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+
+        if(issued) {
+            for (Books books : bookService.getIssuedBooks())
+                modelAddRow(model, books);
+
+        }
+        else{
+            for (Books books : bookService.getAllBooks())
+                modelAddRow(model, books);
+
+        }
+        allBooks.setModel(model);
+
+        JScrollPane scrollPane = new JScrollPane(allBooks);
+
+        f.add(scrollPane);
+        f.setSize(800, 400);
+        f.setVisible(true);
+        f.setLocationRelativeTo(null);
+    }
+
+    private void modelAddRow(DefaultTableModel model, Books books) {
+        String AccNo = books.getAccNo();
+        String name = books.getBookName();
+        String author = books.getAuthorName();
+        String publishedIn = books.getYearOfPub();
+        String abNo = books.getAbscissionNo();
+        String language = books.getLanguage();
+        Double price = books.getPrice();
+
+        model.addRow(new Object[]{AccNo, name, author, publishedIn, abNo, language, price});
     }
 
     /*

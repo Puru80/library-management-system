@@ -4,8 +4,6 @@ import com.example.lmssaraswaticollege.books.BookRepository;
 import com.example.lmssaraswaticollege.books.Books;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -35,14 +33,6 @@ public class IssueService {
             issue.setIssueDate(issueDate);
             issue.setReturnDate(returnDate);
 
-            /*
-            Query query = new Query();
-            query.addCriteria(Criteria.where("accNo").is(issue.getAcId()));
-
-            List<Books> list = mongoTemplate.find(query, Books.class);
-
-             */
-
             Books book = mongoTemplate.findById(issue.getAcId(), Books.class);
 
             if(book==null)
@@ -54,5 +44,26 @@ public class IssueService {
 
             return true;
         }
+    }
+
+    public boolean returnBook(String acID){
+        boolean isPresent = issueRepository.findById(acID).isPresent();
+
+        if(isPresent){
+            Issue issue = mongoTemplate.findById(acID, Issue.class);
+            assert issue != null;
+            mongoTemplate.remove(issue);
+
+            Books book;
+            if(bookRepository.findById(acID).isPresent()) {
+                book = bookRepository.findById(acID).get();
+                book.setIssued(false);
+                bookRepository.save(book);
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }
