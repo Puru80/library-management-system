@@ -21,8 +21,6 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
     private final IssueService issueService;
 
     String[] options = {"Select Role", "ADMIN", "TEACHER", "STUDENT"};
-    String[] columnNames = {"Accession No", "Name", "Author", "Published In", "Abscission No",
-            "Language", "Price"};
 
     public LmsSaraswatiCollegeApplication(UserService userService, BookService bookService, IssueService issueService) {
         this.userService = userService;
@@ -37,15 +35,20 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
     }
 
     /*@Bean
-    CommandLineRunner runner(UserService userService){
+    CommandLineRunner runner(){
         return args -> {
-            User user = new User(
-                    "Admin",
-                    "admin",
-                    Role.ROLE_ADMIN
+            Books book = new Books(
+                    "E1928HUs",
+                    "Book3",
+                    "Author2",
+                    "2007",
+                    "E1928HUs",
+                    2028,
+                    "English",
+                    578.00
             );
 
-            userService.saveUser(user);
+            bookService.addBook(book);
         };
     }*/
 
@@ -57,23 +60,23 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         l1 = new JLabel("Role");
         l1.setBounds(30, 10, 100, 30);
 
-        l2 = new JLabel("Username");  //Create label Username
-        l2.setBounds(30, 60, 100, 30); //x axis, y axis, width, height
+        l2 = new JLabel("Username");
+        l2.setBounds(30, 60, 100, 30);
 
-        l3 = new JLabel("Password");  //Create label Password
+        l3 = new JLabel("Password");
         l3.setBounds(30, 110, 100, 30);
 
         JComboBox<String> roleSelection = new JComboBox<>(options);
         roleSelection.setBounds(110, 10, 200, 30);
 
-        JTextField F_user = new JTextField(); //Create text field for username
+        JTextField F_user = new JTextField();
         F_user.setBounds(110, 60, 200, 30);
 
-        JPasswordField F_pass = new JPasswordField(); //Create text field for password
+        JPasswordField F_pass = new JPasswordField();
         F_pass.setBounds(110, 110, 200, 30);
 
-        JButton login_but = new JButton("Login");//creating instance of JButton for Login Button
-        login_but.setBounds(130, 185, 80, 25);//Dimensions for button
+        JButton login_but = new JButton("Login");
+        login_but.setBounds(130, 185, 80, 25);
 
         login_but.addActionListener(e -> {
 
@@ -103,11 +106,13 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
                         roleSelected
                 );
 
-                if(userService.login(user) && roleSelected.equals(Role.ROLE_ADMIN)){
+                if(userService.login(user)){
                     f.dispose();
-                    admin_menu();
+                    if(roleSelected.equals(Role.ROLE_ADMIN))
+                        admin_menu();
+                    else
+                        user_menu();
                 }
-                //TODO:  Condition for user menu
                 else JOptionPane.showMessageDialog(null, "User does not exist");
 
             }
@@ -139,18 +144,12 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         //Complete
         JButton view_but=new JButton("View Books");
         view_but.setBounds(20,20,120,25);
-        view_but.addActionListener(e -> {
-            JFrame f1 = new JFrame("Books Available");
-            createBookTable(f1, false);
-        });
+        view_but.addActionListener(e -> new Form1(bookService));
 
         //Complete
-        JButton issued_but = new JButton("View Issued Books");
+        /*JButton issued_but = new JButton("View Issued Books");
         issued_but.setBounds(280,20,160,25);
-        issued_but.addActionListener(e -> {
-            JFrame f13 = new JFrame("Users List");
-            createBookTable(f13, true);
-        });
+        issued_but.addActionListener(e -> new Form1(bookService));*/
 
         //Complete
         JButton users_but = new JButton("View Users");
@@ -359,7 +358,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
 
         //Complete
         JButton issue_book=new JButton("Issue Book");
-        issue_book.setBounds(450,20,120,25);
+        issue_book.setBounds(280,20,160,25);
         issue_book.addActionListener(e -> {
             JFrame g = new JFrame("Enter Details");
 
@@ -441,138 +440,30 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         f.add(return_book);
         f.add(issue_book);
         f.add(add_book);
-        f.add(issued_but);
+//        f.add(issued_but);
         f.add(users_but);
         f.add(view_but);
         f.add(add_user);
-        f.setSize(600,200);//400 width and 500 height
-        f.setLayout(null);//using no layout managers
-        f.setVisible(true);//making the frame visible
+        f.setSize(600,200);
+        f.setLayout(null);
+        f.setVisible(true);
         f.setLocationRelativeTo(null);
 
     }
 
-    private void createBookTable(JFrame f, Boolean issued){
-        JTable allBooks = new JTable();
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
+    public void user_menu() {
+        JFrame f=new JFrame("User Functions");
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        if(issued) {
-            for (Books books : bookService.getIssuedBooks())
-                modelAddRow(model, books);
+        JButton view_but=new JButton("View Books");
+        view_but.setBounds(20,20,120,25);
+        view_but.addActionListener(e -> new Form1(bookService));
 
-        }
-        else{
-            for (Books books : bookService.getAllBooks())
-                modelAddRow(model, books);
-
-        }
-        allBooks.setModel(model);
-
-        JScrollPane scrollPane = new JScrollPane(allBooks);
-
-        f.add(scrollPane);
-        f.setSize(800, 400);
+        f.add(view_but);
+        f.setSize(300,100);
+        f.setLayout(null);
         f.setVisible(true);
         f.setLocationRelativeTo(null);
     }
 
-    private void modelAddRow(DefaultTableModel model, Books books) {
-        String AccNo = books.getAccNo();
-        String name = books.getBookName();
-        String author = books.getAuthorName();
-        String publishedIn = books.getYearOfPub();
-        String abNo = books.getAbscissionNo();
-        String language = books.getLanguage();
-        Double price = books.getPrice();
-
-        model.addRow(new Object[]{AccNo, name, author, publishedIn, abNo, language, price});
-    }
-
-    /*
-    public static void user_menu(String UID) {
-        JFrame f=new JFrame("User Functions"); //Give dialog box name as User functions
-
-        JButton view_but=new JButton("View Books");//creating instance of JButton
-        view_but.setBounds(20,20,120,25);//x axis, y axis, width, height
-        view_but.addActionListener(e -> {
-
-            JFrame f12 = new JFrame("Books Available"); //View books stored in database
-            //f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-
-            Connection connection = connect();
-            String sql="select * from BOOKS"; //Retreive data from database
-            try {
-                Statement stmt = connection.createStatement(); //connect to database
-                stmt.executeUpdate("USE LIBRARY"); // use librabry
-                stmt=connection.createStatement();
-                ResultSet rs=stmt.executeQuery(sql);
-                JTable book_list= new JTable(); //show data in table format
-                book_list.setModel(DbUtils.resultSetToTableModel(rs));
-
-                JScrollPane scrollPane = new JScrollPane(book_list); //enable scroll bar
-
-                f12.add(scrollPane); //add scroll bar
-                f12.setSize(800, 400); //set dimensions of view books frame
-                f12.setVisible(true);
-                f12.setLocationRelativeTo(null);
-            } catch (SQLException e1) {
-                JOptionPane.showMessageDialog(null, e1);
-            }
-
-        }
-        );
-
-        JButton my_book=new JButton("My Books");//creating instance of JButton
-        my_book.setBounds(150,20,120,25);//x axis, y axis, width, height
-        my_book.addActionListener(e -> {
-
-
-            JFrame f1 = new JFrame("My Books"); //View books issued by user
-            //f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            int UID_int = Integer.parseInt(UID); //Pass user ID
-
-            //.iid,issued.uid,issued.bid,issued.issued_date,issued.return_date,issued,
-            Connection connection = connect(); //connect to database
-            //retrieve data
-            String sql="select distinct issued.*,books.bname,books.genre,books.price from issued,books " + "where ((issued.uid=" + UID_int + ") and (books.bid in (select bid from issued where issued.uid="+UID_int+"))) group by iid";
-            String sql1 = "select bid from issued where uid="+UID_int;
-            try {
-                Statement stmt = connection.createStatement();
-                //use database
-                stmt.executeUpdate("USE LIBRARY");
-                stmt=connection.createStatement();
-                //store in array
-                ArrayList books_list = new ArrayList();
-
-
-
-                ResultSet rs=stmt.executeQuery(sql);
-                JTable book_list= new JTable(); //store data in table format
-                book_list.setModel(DbUtils.resultSetToTableModel(rs));
-                //enable scroll bar
-                JScrollPane scrollPane = new JScrollPane(book_list);
-
-                f1.add(scrollPane); //add scroll bar
-                f1.setSize(800, 400); //set dimensions of my books frame
-                f1.setVisible(true);
-                f1.setLocationRelativeTo(null);
-            } catch (SQLException e1) {
-                JOptionPane.showMessageDialog(null, e1);
-            }
-
-        }
-        );
-
-
-
-        f.add(my_book); //add my books
-        f.add(view_but); // add view books
-        f.setSize(300,100);//400 width and 500 height
-        f.setLayout(null);//using no layout managers
-        f.setVisible(true);//making the frame visible
-        f.setLocationRelativeTo(null);
-    }
-
-     */
 }

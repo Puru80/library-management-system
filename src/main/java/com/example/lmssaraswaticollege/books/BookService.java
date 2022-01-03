@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -25,6 +26,7 @@ public class BookService {
         if(succ)
             return false;
         else{
+            book.setIssued(false);
             bookRepository.insert(book);
             return true;
         }
@@ -34,6 +36,33 @@ public class BookService {
         Query query = new Query();
         query.addCriteria(Criteria.where("issued").is(true));
 
+        return mongoTemplate.find(query, Books.class);
+    }
+
+    public List<Books> getBooksByQuery(String field, String queryString){
+        Query query;
+
+        switch (field) {
+            case "All Books":
+                return bookRepository.findAll();
+            case "accNo":
+                return List.of(Objects.requireNonNull(mongoTemplate.findById(queryString, Books.class)));
+            case "issued":
+                query = new Query();
+                query.addCriteria(Criteria.where(field).is(true));
+                return mongoTemplate.find(query, Books.class);
+            case "noOfPages":
+                query = new Query();
+                query.addCriteria(Criteria.where(field).is(Integer.parseInt(queryString)));
+                return mongoTemplate.find(query, Books.class);
+            case "price":
+                query = new Query();
+                query.addCriteria(Criteria.where(field).is(Double.parseDouble(queryString)));
+                return mongoTemplate.find(query, Books.class);
+        }
+
+        query = new Query();
+        query.addCriteria(Criteria.where(field).is(queryString));
         return mongoTemplate.find(query, Books.class);
     }
 }
