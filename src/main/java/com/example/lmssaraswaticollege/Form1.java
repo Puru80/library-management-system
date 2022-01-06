@@ -16,10 +16,10 @@ public class Form1 extends JFrame{
 
     private final BookService bookService;
 
-    private final String[] columnNames = {"Accession No", "Name", "Author", "Published In", "Abscission No", "No Of Pages",
+    private String[] columnNames = {"Accession No", "Name", "Author", "Published In", "Abscission No", "No Of Pages",
             "Language", "Price"};
-    private final String[] comboArr = {"All Books", "Accession No", "Name", "Author", "Published In", "Abscission No", "No Of Pages",
-            "Language", "Price", "Issued"};
+    private String[] comboArr = {"All Books", "Accession No", "Name", "Author", "Published In", "Abscission No", "No Of Pages",
+            "Language", "Available", "Price", "Issued"};
     private final Map<String, String> column = Stream.of(new String[][] {
             {"All Books", "All Books"},
             {"Accession No", "accNo"},
@@ -30,7 +30,8 @@ public class Form1 extends JFrame{
             {"No. OF Pages", "noOfPages"},
             {"Language", "language"},
             {"Price", "price"},
-            {"Issued", "issued"}
+            {"Issued", "issued"},
+            {"Available Books", "available"}
     }).collect(Collectors.toMap(data -> data[0], data -> data[1]));
 
     /*{"Accession No": "accNo", "Name": "bookName", "Author": "authorName", "Published In": "yearOfPub",
@@ -43,11 +44,18 @@ public class Form1 extends JFrame{
     private JScrollPane pane;
     private JPanel panelMain;
 
-    public Form1(BookService bookService){
+    public Form1(BookService bookService, boolean admin){
         this.bookService = bookService;
         setContentPane(panelMain);
         setSize(new Dimension(800, 600));
         setVisible(true);
+
+        if(!admin) {
+            columnNames = new String[]{"Accession No", "Name", "Author", "Published In", "Abscission No", "No Of Pages",
+                    "Language"};
+            comboArr = new String[]{"All Books", "Accession No", "Name", "Author", "Published In", "Abscission No", "No Of Pages",
+                    "Language", "Available Books", "Issued"};
+        }
 
         for (String columnName : comboArr) field.addItem(columnName);
 

@@ -51,6 +51,10 @@ public class BookService {
                 query = new Query();
                 query.addCriteria(Criteria.where(field).is(true));
                 return mongoTemplate.find(query, Books.class);
+            case "available":
+                query = new Query();
+                query.addCriteria(Criteria.where("issued").is(false));
+                return mongoTemplate.find(query, Books.class);
             case "noOfPages":
                 query = new Query();
                 query.addCriteria(Criteria.where(field).is(Integer.parseInt(queryString)));

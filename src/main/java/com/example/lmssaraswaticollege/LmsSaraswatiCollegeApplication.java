@@ -144,12 +144,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         //Complete
         JButton view_but=new JButton("View Books");
         view_but.setBounds(20,20,120,25);
-        view_but.addActionListener(e -> new Form1(bookService));
-
-        //Complete
-        /*JButton issued_but = new JButton("View Issued Books");
-        issued_but.setBounds(280,20,160,25);
-        issued_but.addActionListener(e -> new Form1(bookService));*/
+        view_but.addActionListener(e -> new Form1(bookService, true));
 
         //Complete
         JButton users_but = new JButton("View Users");
@@ -440,7 +435,6 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         f.add(return_book);
         f.add(issue_book);
         f.add(add_book);
-//        f.add(issued_but);
         f.add(users_but);
         f.add(view_but);
         f.add(add_user);
@@ -457,7 +451,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
 
         JButton view_but=new JButton("View Books");
         view_but.setBounds(20,20,120,25);
-        view_but.addActionListener(e -> new Form1(bookService));
+        view_but.addActionListener(e -> new Form1(bookService, false));
 
         f.add(view_but);
         f.setSize(300,100);
