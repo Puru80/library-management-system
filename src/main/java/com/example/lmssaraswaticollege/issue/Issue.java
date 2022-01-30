@@ -9,8 +9,6 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 @Document(collection = "issue")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class Issue {
 
     @MongoId(targetType = FieldType.STRING)

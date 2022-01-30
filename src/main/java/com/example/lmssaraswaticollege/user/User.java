@@ -10,8 +10,6 @@ import org.springframework.data.mongodb.core.mapping.MongoId;
 @Document(collection = "user")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class User {
 
     @MongoId(targetType = FieldType.INT64)

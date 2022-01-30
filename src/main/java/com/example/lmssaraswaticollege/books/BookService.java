@@ -1,6 +1,7 @@
 package com.example.lmssaraswaticollege.books;
 
 import lombok.AllArgsConstructor;
+import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -16,6 +17,15 @@ public class BookService {
     private final BookRepository bookRepository;
     private MongoTemplate mongoTemplate;
 
+    public Books getBookByAccNo(String accNo){
+        boolean succ = bookRepository.findById(accNo).isPresent();
+
+        if(succ)
+            return bookRepository.findById(accNo).get();
+
+        return null;
+    }
+
     public List<Books> getAllBooks(){
         return bookRepository.findAll();
     }
@@ -24,12 +34,13 @@ public class BookService {
         boolean succ = bookRepository.findById(book.getAccNo()).isPresent();
 
         if(succ)
-            return false;
+            bookRepository.save(book);
         else{
             book.setIssued(false);
             bookRepository.insert(book);
-            return true;
         }
+
+        return true;
     }
 
     public List<Books> getIssuedBooks(){
@@ -69,4 +80,6 @@ public class BookService {
         query.addCriteria(Criteria.where(field).is(queryString));
         return mongoTemplate.find(query, Books.class);
     }
+
+    //TODO: Update Book Functionality
 }

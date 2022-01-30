@@ -16,9 +16,9 @@ public class Form1 extends JFrame{
 
     private final BookService bookService;
 
-    private String[] columnNames = {"Accession No", "Name", "Author", "Published In", "Abscission No", "No Of Pages",
+    private String[] columnNames = {"Accession No", "Name", "Author", "Published In", "No Of Pages",
             "Language", "Price"};
-    private String[] comboArr = {"All Books", "Accession No", "Name", "Author", "Published In", "Abscission No", "No Of Pages",
+    private String[] comboArr = {"All Books", "Accession No", "Name", "Author", "Published In", "No Of Pages",
             "Language", "Available", "Price", "Issued"};
     private final Map<String, String> column = Stream.of(new String[][] {
             {"All Books", "All Books"},
@@ -46,14 +46,15 @@ public class Form1 extends JFrame{
 
     public Form1(BookService bookService, boolean admin){
         this.bookService = bookService;
+
         setContentPane(panelMain);
         setSize(new Dimension(800, 600));
         setVisible(true);
 
         if(!admin) {
-            columnNames = new String[]{"Accession No", "Name", "Author", "Published In", "Abscission No", "No Of Pages",
+            columnNames = new String[]{"Accession No", "Name", "Author", "Published In", "No Of Pages",
                     "Language"};
-            comboArr = new String[]{"All Books", "Accession No", "Name", "Author", "Published In", "Abscission No", "No Of Pages",
+            comboArr = new String[]{"All Books", "Accession No", "Name", "Author", "Published In", "No Of Pages",
                     "Language", "Available Books", "Issued"};
         }
 
@@ -88,12 +89,11 @@ public class Form1 extends JFrame{
         String name = books.getBookName();
         String author = books.getAuthorName();
         String publishedIn = books.getYearOfPub();
-        String abNo = books.getAbscissionNo();
         int noOfPages = books.getNoOfPages();
         String language = books.getLanguage();
         Double price = books.getPrice();
 
-        model.addRow(new Object[]{AccNo, name, author, publishedIn, abNo, noOfPages, language, price});
+        model.addRow(new Object[]{AccNo, name, author, publishedIn, noOfPages, language, price});
     }
 
 

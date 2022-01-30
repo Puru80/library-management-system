@@ -30,25 +30,20 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
     }
 
     public static void main(String[] args) {
-        new SpringApplicationBuilder(LmsSaraswatiCollegeApplication.class)
-                .headless(false).run(args);
+        SpringApplicationBuilder builder = new SpringApplicationBuilder(LmsSaraswatiCollegeApplication.class);
+
+        builder.headless(false).run(args);
     }
 
     /*@Bean
-    CommandLineRunner runner(){
+    CommandLineRunner runner(SequenceRepository sequenceRepository){
         return args -> {
-            Books book = new Books(
-                    "E1928HUs",
-                    "Book3",
-                    "Author2",
-                    "2007",
-                    "E1928HUs",
-                    2028,
-                    "English",
-                    578.00
+            Sequence seq = new Sequence(
+                    1L,
+                    1L
             );
 
-            bookService.addBook(book);
+            sequenceRepository.insert(seq);
         };
     }*/
 
@@ -251,104 +246,9 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         add_book.setBounds(150,60,120,25);
         add_book.addActionListener(e -> {
 
-            JFrame g = new JFrame("Enter Book Details");
+            JFrame g = new JFrame("Add Book");
 
-            JLabel l1,l2,l3, l4, l5, l6, l7, l8;
-            l1=new JLabel("Accession Id");
-            l1.setBounds(30,15, 115,30);
-
-            l2 = new JLabel("Book Name");
-            l2.setBounds(30,50, 115,30);
-
-            l3 = new JLabel("Author Name");
-            l3.setBounds(30, 85, 115, 30);
-
-            l4 = new JLabel("Year Published");
-            l4.setBounds(30,120, 115,30);
-
-            l5 = new JLabel("Abscission Id");
-            l5.setBounds(30,155, 115,30);
-
-            l6 = new JLabel("Pages");
-            l6.setBounds(30,190, 115,30);
-
-            l7 = new JLabel("Language");
-            l7.setBounds(30,225, 115,30);
-
-            l8 = new JLabel("Price");
-            l8.setBounds(30,260, 115,30);
-
-            JTextField F_acId = new JTextField();
-            F_acId.setBounds(110, 15, 200, 30);
-
-            JTextField F_book =new JTextField();
-            F_book.setBounds(110, 50, 200, 30);
-
-            JTextField F_author =new JTextField();
-            F_author.setBounds(110, 85, 200, 30);
-
-            JTextField F_published =new JTextField();
-            F_published.setBounds(110,120, 200,30);
-
-            JTextField F_abId =new JTextField();
-            F_abId.setBounds(110, 155, 200, 30);
-
-            JTextField F_pages =new JTextField();
-            F_pages.setBounds(110, 190, 200, 30);
-
-            JTextField F_language =new JTextField();
-            F_language.setBounds(110, 225, 200, 30);
-
-            JTextField F_price =new JTextField();
-            F_price.setBounds(110, 260, 200, 30);
-
-            JButton create_but=new JButton("Submit");
-            create_but.setBounds(130,300,80,25);
-            create_but.addActionListener(e12 -> {
-                String acId = F_acId.getText();
-                String bookName = F_book.getText();
-                String author = F_author.getText();
-                String published = F_published.getText();
-                String abId = F_abId.getText();
-                int pages = Integer.parseInt(F_pages.getText());
-                String lang = F_language.getText();
-                Double price = Double.parseDouble(F_price.getText());
-
-                if(bookService.addBook(new Books(acId, bookName, author, published, abId,
-                        pages, lang, price, false))) {
-                    JOptionPane.showMessageDialog(null, "Book Added to Database",
-                            "Success message", JOptionPane.INFORMATION_MESSAGE);
-                    g.dispose();
-                }
-                else
-                    JOptionPane.showMessageDialog(null, "Book Already Exists",
-                            "Error Message", JOptionPane.ERROR_MESSAGE);
-            });
-
-            g.add(l1);
-            g.add(l2);
-            g.add(l3);
-            g.add(l4);
-            g.add(l5);
-            g.add(l6);
-            g.add(l7);
-            g.add(l8);
-
-            g.add(F_acId);
-            g.add(F_book);
-            g.add(F_author);
-            g.add(F_price);
-            g.add(F_language);
-            g.add(F_pages);
-            g.add(F_published);
-            g.add(F_abId);
-
-            g.add(create_but);
-            g.setSize(600,600);
-            g.setLayout(null);
-            g.setVisible(true);
-            g.setLocationRelativeTo(null);
-
+            addEditBook(g, "add");
         });
 
         //Complete
@@ -394,7 +294,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
 
         });
 
-
+        //Complete
         JButton return_book=new JButton("Return Book");
         return_book.setBounds(280,60,160,25);
         return_book.addActionListener(e -> {
@@ -432,13 +332,30 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
             g.setLocationRelativeTo(null);
         });
 
+        JButton viewIssuedBooks = new JButton("View Issued Books");
+        viewIssuedBooks.setBounds(300, 100, 160, 25);
+        viewIssuedBooks.addActionListener(e -> {
+
+        });
+
+        JButton editBook = new JButton("Edit Book");
+        editBook.setBounds(100, 100, 160, 25);
+        editBook.addActionListener(e -> {
+            JFrame g = new JFrame("Edit Book");
+
+            addEditBook(g, "edit");
+        });
+
         f.add(return_book);
         f.add(issue_book);
         f.add(add_book);
         f.add(users_but);
         f.add(view_but);
         f.add(add_user);
-        f.setSize(600,200);
+        f.add(editBook);
+        f.add(viewIssuedBooks);
+
+        f.setSize(550,200);
         f.setLayout(null);
         f.setVisible(true);
         f.setLocationRelativeTo(null);
@@ -460,4 +377,121 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         f.setLocationRelativeTo(null);
     }
 
+    //Complete
+    private void addEditBook(JFrame g, String action){
+
+        JLabel l1,l2,l3, l4, l5, l6, l7;
+        l1=new JLabel("Accession Id");
+        l1.setBounds(30,15, 125,30);
+
+        l2 = new JLabel("Book Name");
+        l2.setBounds(30,50, 125,30);
+
+        l3 = new JLabel("Author Name");
+        l3.setBounds(30, 85, 125, 30);
+
+        l4 = new JLabel("Year Published");
+        l4.setBounds(30,120, 125,30);
+
+        l5 = new JLabel("Pages");
+        l5.setBounds(30,155, 125,30);
+
+        l6 = new JLabel("Language");
+        l6.setBounds(30,190, 125,30);
+
+        l7 = new JLabel("Price");
+        l7.setBounds(30,225, 125,30);
+
+        JTextField F_acId = new JTextField();
+        F_acId.setBounds(120, 15, 200, 30);
+
+        JTextField F_book =new JTextField();
+        F_book.setBounds(120, 50, 200, 30);
+
+        JTextField F_author =new JTextField();
+        F_author.setBounds(120, 85, 200, 30);
+
+        JTextField F_published =new JTextField();
+        F_published.setBounds(120,120, 200,30);
+
+        JTextField F_pages =new JTextField();
+        F_pages.setBounds(120, 155, 200, 30);
+
+        JTextField F_language =new JTextField();
+        F_language.setBounds(120, 190, 200, 30);
+
+        JTextField F_price =new JTextField();
+        F_price.setBounds(120, 225, 200, 30);
+
+        JButton create_but=new JButton("Submit");
+        create_but.setBounds(130,300,80,25);
+        create_but.addActionListener(e12 -> {
+            String acId = F_acId.getText();
+            String bookName = F_book.getText();
+            String author = F_author.getText();
+            String published = F_published.getText();
+            int pages = Integer.parseInt(F_pages.getText());
+            String lang = F_language.getText();
+            Double price = Double.parseDouble(F_price.getText());
+
+            if(bookService.addBook(new Books(acId, bookName, author, published,
+                    pages, lang, price, false))) {
+                JOptionPane.showMessageDialog(null, "Book Added to Database",
+                        "Success message", JOptionPane.INFORMATION_MESSAGE);
+                g.dispose();
+            }
+            else
+                JOptionPane.showMessageDialog(null, "Book Already Exists",
+                        "Error Message", JOptionPane.ERROR_MESSAGE);
+        });
+
+        JButton getBookDeets = new JButton("Get Details");
+        getBookDeets.setBounds(350, 15, 100, 30);
+        getBookDeets.addActionListener(e -> {
+            String accNo = F_acId.getText();
+
+            Books book = bookService.getBookByAccNo(accNo);
+
+            if(book != null) {
+                F_book.setText(book.getBookName());
+                F_author.setText(book.getAuthorName());
+                F_language.setText(book.getLanguage());
+                F_pages.setText(String.valueOf(book.getNoOfPages()));
+                F_price.setText(String.valueOf(book.getPrice()));
+                F_published.setText(book.getYearOfPub());
+                create_but.setEnabled(true);
+            }
+            else
+                JOptionPane.showMessageDialog(null, "Book Does Not Exist",
+                        "Error Message", JOptionPane.ERROR_MESSAGE);
+
+        });
+
+        if(action.equals("edit")){
+            create_but.setEnabled(false);
+            g.add(getBookDeets);
+        }
+
+        g.add(l1);
+        g.add(l2);
+        g.add(l3);
+        g.add(l4);
+        g.add(l5);
+        g.add(l6);
+        g.add(l7);
+
+        g.add(F_acId);
+        g.add(F_book);
+        g.add(F_author);
+        g.add(F_price);
+        g.add(F_language);
+        g.add(F_pages);
+        g.add(F_published);
+
+        g.add(create_but);
+        g.setSize(600,400);
+        g.setLayout(null);
+        g.setVisible(true);
+        g.setLocationRelativeTo(null);
+    }
 }
