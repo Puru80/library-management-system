@@ -36,14 +36,60 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
     }
 
     /*@Bean
-    CommandLineRunner runner(SequenceRepository sequenceRepository){
+    CommandLineRunner runner(BookRepository repository){
         return args -> {
-            Sequence seq = new Sequence(
-                    1L,
-                    1L
-            );
 
-            sequenceRepository.insert(seq);
+            List<Books> booklIst = new ArrayList<>();
+
+            for(int i=0;i<10;i++){
+                Books book = new Books(
+                        "accNo" + i,
+                        "Book" + i,
+                        "Nursing",
+                        "author" + i,
+                        "2022",
+                        200 + i,
+                        "English",
+                        500D + i,
+                        false
+                );
+
+                booklIst.add(book);
+            }
+
+            for(int i=10;i<20;i++){
+                Books book = new Books(
+                        "accNo" + i,
+                        "Book" + i,
+                        "School",
+                        "author" + i,
+                        "2022",
+                        200 + i,
+                        "English",
+                        500D + i,
+                        false
+                );
+
+                booklIst.add(book);
+            }
+
+            for(int i=20;i<30;i++){
+                Books book = new Books(
+                        "accNo" + i,
+                        "Book" + i,
+                        "Management",
+                        "author" + i,
+                        "2022",
+                        200 + i,
+                        "English",
+                        500D + i,
+                        false
+                );
+
+                booklIst.add(book);
+            }
+
+            repository.saveAll(booklIst);
         };
     }*/
 
@@ -332,12 +378,13 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
             g.setLocationRelativeTo(null);
         });
 
-        JButton viewIssuedBooks = new JButton("View Issued Books");
+        /*JButton viewIssuedBooks = new JButton("View Issued Books");
         viewIssuedBooks.setBounds(300, 100, 160, 25);
         viewIssuedBooks.addActionListener(e -> {
 
-        });
+        });*/
 
+        //Complete
         JButton editBook = new JButton("Edit Book");
         editBook.setBounds(100, 100, 160, 25);
         editBook.addActionListener(e -> {
@@ -353,7 +400,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         f.add(view_but);
         f.add(add_user);
         f.add(editBook);
-        f.add(viewIssuedBooks);
+//        f.add(viewIssuedBooks);
 
         f.setSize(550,200);
         f.setLayout(null);
@@ -380,27 +427,30 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
     //Complete
     private void addEditBook(JFrame g, String action){
 
-        JLabel l1,l2,l3, l4, l5, l6, l7;
+        JLabel l1,l2,l3, l4, l5, l6, l7, l8;
         l1=new JLabel("Accession Id");
         l1.setBounds(30,15, 125,30);
 
         l2 = new JLabel("Book Name");
         l2.setBounds(30,50, 125,30);
 
-        l3 = new JLabel("Author Name");
+        l3 = new JLabel("Department");
         l3.setBounds(30, 85, 125, 30);
 
-        l4 = new JLabel("Year Published");
+        l4 = new JLabel("Author Name");
         l4.setBounds(30,120, 125,30);
 
-        l5 = new JLabel("Pages");
+        l5 = new JLabel("Year Published");
         l5.setBounds(30,155, 125,30);
 
-        l6 = new JLabel("Language");
+        l6 = new JLabel("Pages");
         l6.setBounds(30,190, 125,30);
 
-        l7 = new JLabel("Price");
+        l7 = new JLabel("Language");
         l7.setBounds(30,225, 125,30);
+
+        l8 = new JLabel("Price");
+        l8.setBounds(30,260, 125,30);
 
         JTextField F_acId = new JTextField();
         F_acId.setBounds(120, 15, 200, 30);
@@ -408,33 +458,37 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         JTextField F_book =new JTextField();
         F_book.setBounds(120, 50, 200, 30);
 
+        JTextField F_dept = new JTextField();
+        F_dept.setBounds(120, 85, 200, 30);
+
         JTextField F_author =new JTextField();
-        F_author.setBounds(120, 85, 200, 30);
+        F_author.setBounds(120,120, 200,30);
 
         JTextField F_published =new JTextField();
-        F_published.setBounds(120,120, 200,30);
+        F_published.setBounds(120,155, 200,30);
 
         JTextField F_pages =new JTextField();
-        F_pages.setBounds(120, 155, 200, 30);
+        F_pages.setBounds(120, 190, 200, 30);
 
         JTextField F_language =new JTextField();
-        F_language.setBounds(120, 190, 200, 30);
+        F_language.setBounds(120, 225, 200, 30);
 
         JTextField F_price =new JTextField();
-        F_price.setBounds(120, 225, 200, 30);
+        F_price.setBounds(120, 260, 200, 30);
 
         JButton create_but=new JButton("Submit");
         create_but.setBounds(130,300,80,25);
         create_but.addActionListener(e12 -> {
             String acId = F_acId.getText();
             String bookName = F_book.getText();
+            String bookDept = F_dept.getText();
             String author = F_author.getText();
             String published = F_published.getText();
             int pages = Integer.parseInt(F_pages.getText());
             String lang = F_language.getText();
             Double price = Double.parseDouble(F_price.getText());
 
-            if(bookService.addBook(new Books(acId, bookName, author, published,
+            if(bookService.addBook(new Books(acId, bookName, bookDept, author, published,
                     pages, lang, price, false))) {
                 JOptionPane.showMessageDialog(null, "Book Added to Database",
                         "Success message", JOptionPane.INFORMATION_MESSAGE);
@@ -455,6 +509,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
             if(book != null) {
                 F_book.setText(book.getBookName());
                 F_author.setText(book.getAuthorName());
+                F_dept.setText(book.getDepartment());
                 F_language.setText(book.getLanguage());
                 F_pages.setText(String.valueOf(book.getNoOfPages()));
                 F_price.setText(String.valueOf(book.getPrice()));
@@ -479,8 +534,10 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         g.add(l5);
         g.add(l6);
         g.add(l7);
+        g.add(l8);
 
         g.add(F_acId);
+        g.add(F_dept);
         g.add(F_book);
         g.add(F_author);
         g.add(F_price);

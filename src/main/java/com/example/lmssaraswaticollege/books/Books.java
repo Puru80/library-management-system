@@ -19,6 +19,7 @@ public class Books {
     private String accNo;
 
     private String bookName;
+    private String department;
     private String authorName;
     private String yearOfPub;
     private int noOfPages;
@@ -26,25 +27,16 @@ public class Books {
     private Double price;
     private boolean issued;
 
-    public Books(String accNo, String bookName, String authorName, String yearOfPub,
-                 int noOfPages, String language, Double price) {
+    /*public Books(String accNo, String bookName, String department, String authorName, String yearOfPub, int noOfPages,
+                 String language, Double price, boolean issued) {
         this.accNo = accNo;
         this.bookName = bookName;
-        this.authorName = authorName;
-        this.yearOfPub = yearOfPub;
-        this.noOfPages = noOfPages;
-        this.language = language;
-        this.price = price;
-    }
-
-    public Books(String bookName, String authorName, String yearOfPub,
-                 int noOfPages, String language, Double price, boolean issued) {
-        this.bookName = bookName;
+        this.department = department;
         this.authorName = authorName;
         this.yearOfPub = yearOfPub;
         this.noOfPages = noOfPages;
         this.language = language;
         this.price = price;
         this.issued = issued;
-    }
+    }*/
 }
