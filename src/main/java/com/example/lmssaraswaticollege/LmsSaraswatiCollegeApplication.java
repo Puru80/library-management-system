@@ -35,64 +35,6 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         builder.headless(false).run(args);
     }
 
-    /*@Bean
-    CommandLineRunner runner(BookRepository repository){
-        return args -> {
-
-            List<Books> booklIst = new ArrayList<>();
-
-            for(int i=0;i<10;i++){
-                Books book = new Books(
-                        "accNo" + i,
-                        "Book" + i,
-                        "Nursing",
-                        "author" + i,
-                        "2022",
-                        200 + i,
-                        "English",
-                        500D + i,
-                        false
-                );
-
-                booklIst.add(book);
-            }
-
-            for(int i=10;i<20;i++){
-                Books book = new Books(
-                        "accNo" + i,
-                        "Book" + i,
-                        "School",
-                        "author" + i,
-                        "2022",
-                        200 + i,
-                        "English",
-                        500D + i,
-                        false
-                );
-
-                booklIst.add(book);
-            }
-
-            for(int i=20;i<30;i++){
-                Books book = new Books(
-                        "accNo" + i,
-                        "Book" + i,
-                        "Management",
-                        "author" + i,
-                        "2022",
-                        200 + i,
-                        "English",
-                        500D + i,
-                        false
-                );
-
-                booklIst.add(book);
-            }
-
-            repository.saveAll(booklIst);
-        };
-    }*/
-
     public void login() {
         JFrame f = new JFrame("Login");
         f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -294,95 +236,18 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
 
             JFrame g = new JFrame("Add Book");
 
-            addEditBook(g, "add");
+            addEditBook(g, "Add Book");
         });
 
         //Complete
         JButton issue_book=new JButton("Issue Book");
         issue_book.setBounds(280,20,160,25);
-        issue_book.addActionListener(e -> {
-            JFrame g = new JFrame("Enter Details");
-
-            JLabel l1;
-            l1=new JLabel("Accession ID");
-            l1.setBounds(30,15, 100,30);
-
-            JTextField F_bid = new JTextField();
-            F_bid.setBounds(110, 15, 200, 30);
-
-            JButton create_but=new JButton("Submit");
-            create_but.setBounds(130,170,80,25);
-            create_but.addActionListener(e13 -> {
-
-                String bid = F_bid.getText();
-
-                if(issueService.issueBook(new Issue(bid))) {
-                    JOptionPane.showMessageDialog(null, "Book Issued",
-                            "Success Message", JOptionPane.INFORMATION_MESSAGE);
-                    g.dispose();
-                }
-                else
-                    JOptionPane.showMessageDialog(null, "The book is taken or not present",
-                            "Error Message", JOptionPane.ERROR_MESSAGE);
-
-            });
-
-
-            g.add(F_bid);
-            g.add(create_but);
-            g.add(l1);
-
-            g.setSize(350,250);//400 width and 500 height
-            g.setLayout(null);//using no layout managers
-            g.setVisible(true);//making the frame visible
-            g.setLocationRelativeTo(null);
-
-
-        });
+        issue_book.addActionListener(e -> issueReturnBook("Issue Book"));
 
         //Complete
-        JButton return_book=new JButton("Return Book");
+        JButton return_book = new JButton("Return Book");
         return_book.setBounds(280,60,160,25);
-        return_book.addActionListener(e -> {
-            JFrame g = new JFrame("Enter Details");
-
-            JLabel l1;
-            l1 = new JLabel("Accession ID");
-            l1.setBounds(30,50, 100,30);
-
-            JTextField F_return = new JTextField();
-            F_return.setBounds(180, 50, 130, 30);
-
-            JButton create_but = new JButton("Return");
-            create_but.setBounds(130,170,80,25);
-            create_but.addActionListener(e14 -> {
-                String acID = F_return.getText();
-
-                if(issueService.returnBook(acID)) {
-                    JOptionPane.showMessageDialog(null, "Book Returned",
-                            "Message", JOptionPane.INFORMATION_MESSAGE);
-                    g.dispose();
-                }
-                else
-                    JOptionPane.showMessageDialog(null, "Book Not Issued",
-                            "Message", JOptionPane.ERROR_MESSAGE);
-
-            });
-
-            g.add(create_but);
-            g.add(l1);
-            g.add(F_return);
-            g.setSize(350,250);//400 width and 500 height
-            g.setLayout(null);//using no layout managers
-            g.setVisible(true);//making the frame visible
-            g.setLocationRelativeTo(null);
-        });
-
-        /*JButton viewIssuedBooks = new JButton("View Issued Books");
-        viewIssuedBooks.setBounds(300, 100, 160, 25);
-        viewIssuedBooks.addActionListener(e -> {
-
-        });*/
+        return_book.addActionListener(e -> issueReturnBook("Return Book"));
 
         //Complete
         JButton editBook = new JButton("Edit Book");
@@ -390,7 +255,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         editBook.addActionListener(e -> {
             JFrame g = new JFrame("Edit Book");
 
-            addEditBook(g, "edit");
+            addEditBook(g, "Edit Book");
         });
 
         f.add(return_book);
@@ -400,7 +265,6 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         f.add(view_but);
         f.add(add_user);
         f.add(editBook);
-//        f.add(viewIssuedBooks);
 
         f.setSize(550,200);
         f.setLayout(null);
@@ -427,7 +291,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
     //Complete
     private void addEditBook(JFrame g, String action){
 
-        JLabel l1,l2,l3, l4, l5, l6, l7, l8;
+        JLabel l1,l2,l3, l4, l5, l6, l7, l8, l9;
         l1=new JLabel("Accession Id");
         l1.setBounds(30,15, 125,30);
 
@@ -440,17 +304,20 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         l4 = new JLabel("Author Name");
         l4.setBounds(30,120, 125,30);
 
+        l9 = new JLabel("Publisher");
+        l9.setBounds(30,155, 125,30);
+
         l5 = new JLabel("Year Published");
-        l5.setBounds(30,155, 125,30);
+        l5.setBounds(30,190, 125,30);
 
         l6 = new JLabel("Pages");
-        l6.setBounds(30,190, 125,30);
+        l6.setBounds(30,225, 125,30);
 
         l7 = new JLabel("Language");
-        l7.setBounds(30,225, 125,30);
+        l7.setBounds(30,260, 125,30);
 
         l8 = new JLabel("Price");
-        l8.setBounds(30,260, 125,30);
+        l8.setBounds(30,295, 125,30);
 
         JTextField F_acId = new JTextField();
         F_acId.setBounds(120, 15, 200, 30);
@@ -464,56 +331,71 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         JTextField F_author =new JTextField();
         F_author.setBounds(120,120, 200,30);
 
+        JTextField F_publisher = new JTextField();
+        F_publisher.setBounds(120,155, 200,30);
+
         JTextField F_published =new JTextField();
-        F_published.setBounds(120,155, 200,30);
+        F_published.setBounds(120, 190, 200, 30);
 
         JTextField F_pages =new JTextField();
-        F_pages.setBounds(120, 190, 200, 30);
+        F_pages.setBounds(120, 225, 200, 30);
 
         JTextField F_language =new JTextField();
-        F_language.setBounds(120, 225, 200, 30);
+        F_language.setBounds(120, 260, 200, 30);
 
         JTextField F_price =new JTextField();
-        F_price.setBounds(120, 260, 200, 30);
+        F_price.setBounds(120, 295, 200, 30);
 
         JButton create_but=new JButton("Submit");
-        create_but.setBounds(130,300,80,25);
+        create_but.setBounds(130,330,80,25);
         create_but.addActionListener(e12 -> {
+
             String acId = F_acId.getText();
             String bookName = F_book.getText();
             String bookDept = F_dept.getText();
             String author = F_author.getText();
             String published = F_published.getText();
-            int pages = Integer.parseInt(F_pages.getText());
+            String pages = F_pages.getText();
             String lang = F_language.getText();
-            Double price = Double.parseDouble(F_price.getText());
+            String price = F_price.getText();
+            String publisher = F_publisher.getText();
 
-            if(bookService.addBook(new Books(acId, bookName, bookDept, author, published,
-                    pages, lang, price, false))) {
-                JOptionPane.showMessageDialog(null, "Book Added to Database",
-                        "Success message", JOptionPane.INFORMATION_MESSAGE);
-                g.dispose();
+            if(action.equals("Edit Book")){
+                if(bookService.updateBook(new Books(acId, bookName, bookDept, author, publisher, published,
+                        pages, lang, price, false))) {
+                    JOptionPane.showMessageDialog(null, "Book Updated",
+                            "Success message", JOptionPane.INFORMATION_MESSAGE);
+                    g.dispose();
+                }
             }
-            else
-                JOptionPane.showMessageDialog(null, "Book Already Exists",
-                        "Error Message", JOptionPane.ERROR_MESSAGE);
+            else {
+                if (bookService.addBook(new Books(acId, bookName, bookDept, author, publisher, published,
+                        pages, lang, price, false))) {
+                    JOptionPane.showMessageDialog(null, "Book Added to Database",
+                            "Success message", JOptionPane.INFORMATION_MESSAGE);
+                    g.dispose();
+                } else
+                    JOptionPane.showMessageDialog(null, "Book Already Exists",
+                            "Error Message", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
         JButton getBookDeets = new JButton("Get Details");
         getBookDeets.setBounds(350, 15, 100, 30);
         getBookDeets.addActionListener(e -> {
             String accNo = F_acId.getText();
+            String department = F_dept.getText();
 
-            Books book = bookService.getBookByAccNo(accNo);
+            Books book = bookService.getBookByAccNoAndDept(accNo, department);
 
             if(book != null) {
                 F_book.setText(book.getBookName());
                 F_author.setText(book.getAuthorName());
-                F_dept.setText(book.getDepartment());
                 F_language.setText(book.getLanguage());
                 F_pages.setText(String.valueOf(book.getNoOfPages()));
                 F_price.setText(String.valueOf(book.getPrice()));
                 F_published.setText(book.getYearOfPub());
+                F_publisher.setText(book.getPublisher());
                 create_but.setEnabled(true);
             }
             else
@@ -522,7 +404,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
 
         });
 
-        if(action.equals("edit")){
+        if(action.equals("Edit Book")){
             create_but.setEnabled(false);
             g.add(getBookDeets);
         }
@@ -535,6 +417,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         g.add(l6);
         g.add(l7);
         g.add(l8);
+        g.add(l9);
 
         g.add(F_acId);
         g.add(F_dept);
@@ -544,11 +427,86 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         g.add(F_language);
         g.add(F_pages);
         g.add(F_published);
+        g.add(F_publisher);
 
         g.add(create_but);
-        g.setSize(600,400);
+        create_but.setVisible(true);
+
+        g.setSize(600,500);
         g.setLayout(null);
         g.setVisible(true);
         g.setLocationRelativeTo(null);
+    }
+
+    //Complete
+    private void issueReturnBook(String action){
+        JFrame g = new JFrame("Enter Details");
+
+        JLabel l1, l2;
+        l1 = new JLabel("Accession ID");
+        l1.setBounds(30,15, 100,30);
+
+        l2 = new JLabel("Department");
+        l2.setBounds(30, 80, 100, 30);
+
+        JTextField F_bid = new JTextField();
+        F_bid.setBounds(110, 15, 200, 30);
+
+        JTextField F_dept = new JTextField();
+        F_dept.setBounds(110, 80, 200, 30);
+
+        JButton create_but;
+        create_but = new JButton(action);
+        create_but.setBounds(50,170,200,25);
+
+        if(action.equals("Issue Book")) {
+            create_but.addActionListener(e13 -> {
+
+                String bid = F_bid.getText();
+                String dept = F_dept.getText();
+
+                if (issueService.issueBook(new Issue(bid, dept))) {
+                    JOptionPane.showMessageDialog(null, "Book Issued",
+                            "Success Message", JOptionPane.INFORMATION_MESSAGE);
+                    g.dispose();
+                } else
+                    JOptionPane.showMessageDialog(null, "The book is taken or not present",
+                            "Error Message", JOptionPane.ERROR_MESSAGE);
+
+            });
+        }
+        else{
+            create_but.addActionListener(e14 -> {
+                String acID = F_bid.getText();
+                String dept = F_dept.getText();
+
+                if(issueService.returnBook(acID, dept)) {
+                    JOptionPane.showMessageDialog(null, "Book Returned",
+                            "Message", JOptionPane.INFORMATION_MESSAGE);
+                    g.dispose();
+                }
+                else
+                    JOptionPane.showMessageDialog(null, "Book Not Issued",
+                            "Message", JOptionPane.ERROR_MESSAGE);
+
+            });
+        }
+
+
+        g.add(F_bid);
+        g.add(create_but);
+        g.add(l1);
+        g.add(F_dept);
+        g.add(l2);
+
+        g.setSize(350,350);
+        g.setLayout(null);
+        g.setVisible(true);
+        g.setLocationRelativeTo(null);
+    }
+
+    //TODO: Complete method
+    private void loginAddUser(String action){
+
     }
 }

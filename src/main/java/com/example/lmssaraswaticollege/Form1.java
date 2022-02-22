@@ -16,9 +16,9 @@ public class Form1 extends JFrame{
 
     private final BookService bookService;
 
-    private String[] columnNames = {"Accession No", "Name", "Department", "Author", "Published In", "No Of Pages",
+    private String[] columnNames = {"Accession No", "Name", "Department", "Author", "Publisher", "Published In", "No Of Pages",
             "Language", "Price"};
-    private String[] comboArr = {"All Books", "Accession No", "Name", "Department", "Author", "Published In", "No Of Pages",
+    private String[] comboArr = {"All Books", "Accession No", "Name", "Department", "Author", "Publisher", "Published In", "No Of Pages",
             "Language", "Available", "Price", "Issued"};
     private final Map<String, String> column = Stream.of(new String[][] {
             {"All Books", "All Books"},
@@ -26,6 +26,7 @@ public class Form1 extends JFrame{
             {"Name", "bookName"},
             {"Department", "department"},
             {"Author", "authorName"},
+            {"Publisher", "publisher"},
             {"Published In", "yearOfPub"},
             {"Abscission No", "abscissionNo"},
             {"No. OF Pages", "noOfPages"},
@@ -91,11 +92,12 @@ public class Form1 extends JFrame{
         String dept = books.getDepartment();
         String author = books.getAuthorName();
         String publishedIn = books.getYearOfPub();
-        int noOfPages = books.getNoOfPages();
+        String noOfPages = books.getNoOfPages();
         String language = books.getLanguage();
-        Double price = books.getPrice();
+        String price = books.getPrice();
+        String publisher = books.getPublisher();
 
-        model.addRow(new Object[]{AccNo, name, dept, author, publishedIn, noOfPages, language, price});
+        model.addRow(new Object[]{AccNo, name, dept, author, publisher, publishedIn, noOfPages, language, price});
     }
 
 

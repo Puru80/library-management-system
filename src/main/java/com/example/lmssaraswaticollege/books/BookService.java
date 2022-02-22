@@ -1,14 +1,13 @@
 package com.example.lmssaraswaticollege.books;
 
 import lombok.AllArgsConstructor;
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -17,11 +16,11 @@ public class BookService {
     private final BookRepository bookRepository;
     private MongoTemplate mongoTemplate;
 
-    public Books getBookByAccNo(String accNo){
-        boolean succ = bookRepository.findById(accNo).isPresent();
+    public Books getBookByAccNoAndDept(String accNo, String department){
+        boolean succ = bookRepository.findByAccNoAndDepartment(accNo, department).isPresent();
 
         if(succ)
-            return bookRepository.findById(accNo).get();
+            return bookRepository.findByAccNoAndDepartment(accNo, department).get();
 
         return null;
     }
@@ -31,23 +30,30 @@ public class BookService {
     }
 
     public boolean addBook(Books book){
-        boolean succ = bookRepository.findById(book.getAccNo()).isPresent();
+        boolean succ = bookRepository.findByAccNoAndDepartment(book.getAccNo(), book.getDepartment()).isPresent();
 
         if(succ)
-            bookRepository.save(book);
-        else{
-            book.setIssued(false);
-            bookRepository.insert(book);
-        }
+            return false;
 
+        bookRepository.save(book);
         return true;
     }
 
-    public List<Books> getIssuedBooks(){
+    public boolean updateBook(Books book){
         Query query = new Query();
-        query.addCriteria(Criteria.where("issued").is(true));
+        query.addCriteria(Criteria.where("accNo").is(book.getAccNo()).and("department").
+                is(book.getDepartment()));
+        Update update = new Update();
+        update.set("bookName", book.getBookName());
+        update.set("authorName", book.getAuthorName());
+        update.set("publisher", book.getPublisher());
+        update.set("yearOfPub", book.getYearOfPub());
+        update.set("noOfPages", book.getNoOfPages());
+        update.set("language", book.getLanguage());
+        update.set("price", book.getPrice());
+        mongoTemplate.upsert(query, update, Books.class);
 
-        return mongoTemplate.find(query, Books.class);
+        return true;
     }
 
     public List<Books> getBooksByQuery(String field, String queryString){
@@ -56,8 +62,6 @@ public class BookService {
         switch (field) {
             case "All Books":
                 return bookRepository.findAll();
-            case "accNo":
-                return List.of(Objects.requireNonNull(mongoTemplate.findById(queryString, Books.class)));
             case "issued":
                 query = new Query();
                 query.addCriteria(Criteria.where(field).is(true));
@@ -80,6 +84,4 @@ public class BookService {
         query.addCriteria(Criteria.where(field).is(queryString));
         return mongoTemplate.find(query, Books.class);
     }
-
-    //TODO: Update Book Functionality
 }

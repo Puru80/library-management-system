@@ -4,6 +4,9 @@ import com.example.lmssaraswaticollege.books.BookRepository;
 import com.example.lmssaraswaticollege.books.Books;
 import lombok.AllArgsConstructor;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -20,7 +23,7 @@ public class IssueService {
     private final MongoTemplate mongoTemplate;
 
     public boolean issueBook(Issue issue){
-        boolean succ = issueRepository.findById(issue.getAcId()).isPresent();
+        boolean succ = issueRepository.findByAcIdAndDepartment(issue.getAcId(), issue.getDepartment()).isPresent();
 
         if(succ)
             return false;
@@ -33,33 +36,26 @@ public class IssueService {
             issue.setIssueDate(issueDate);
             issue.setReturnDate(returnDate);
 
-            Books book = mongoTemplate.findById(issue.getAcId(), Books.class);
+            Query query = new Query();
+            query.addCriteria(Criteria.where("accNo").is(issue.getAcId()).and("department").
+                    is(issue.getDepartment()));
+            Update update = new Update();
+            update.set("issued", true);
+            mongoTemplate.upsert(query, update, Books.class);
 
-            if(book==null)
-                return false;
-
-            book.setIssued(true);
-            bookRepository.save(book);
             issueRepository.insert(issue);
 
             return true;
         }
     }
 
-    public boolean returnBook(String acID){
-        boolean isPresent = issueRepository.findById(acID).isPresent();
+    public boolean returnBook(String acID, String department){
+        boolean isPresent = issueRepository.findByAcIdAndDepartment(acID, department).isPresent();
 
         if(isPresent){
-            Issue issue = mongoTemplate.findById(acID, Issue.class);
-            assert issue != null;
-            mongoTemplate.remove(issue);
-
-            Books book;
-            if(bookRepository.findById(acID).isPresent()) {
-                book = bookRepository.findById(acID).get();
-                book.setIssued(false);
-                bookRepository.save(book);
-            }
+            Query query = new Query();
+            query.addCriteria(Criteria.where("acId").is(acID).and("department").is(department));
+            mongoTemplate.remove(query, Issue.class, "issue");
 
             return true;
         }
