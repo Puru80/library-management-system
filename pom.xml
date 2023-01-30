@@ -8,11 +8,13 @@
         <version>2.6.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+
     <groupId>com.example</groupId>
     <artifactId>lms-saraswati-college</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.1</version>
     <name>lms-saraswati-college</name>
     <description>lms-saraswati-college</description>
+
     <properties>
         <java.version>17</java.version>
     </properties>

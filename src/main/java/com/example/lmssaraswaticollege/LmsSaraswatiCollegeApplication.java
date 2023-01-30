@@ -4,6 +4,7 @@ import com.example.lmssaraswaticollege.books.BookService;
 import com.example.lmssaraswaticollege.books.Books;
 import com.example.lmssaraswaticollege.issue.Issue;
 import com.example.lmssaraswaticollege.issue.IssueService;
+import com.example.lmssaraswaticollege.sequence.SequenceRepository;
 import com.example.lmssaraswaticollege.user.Role;
 import com.example.lmssaraswaticollege.user.User;
 import com.example.lmssaraswaticollege.user.UserService;
