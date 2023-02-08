@@ -21,6 +21,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
     private final IssueService issueService;
 
     String[] options = {"Select Role", "ADMIN", "TEACHER", "STUDENT"};
+    String[] bookDepartment = {"Select Department", "Jaydeep Sharda Nursing", "Saraswati mahavidyalaya", "Saraswati Vidyalaya"};
 
     public LmsSaraswatiCollegeApplication(UserService userService, BookService bookService, IssueService issueService) {
         this.userService = userService;
@@ -102,11 +103,6 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
             }
         });
 
-        setUpLogin(f, l1, l2, l3, roleSelection, fUser, fPass, loginBut);
-    }
-
-    public void setUpLogin(JFrame f, JLabel l1, JLabel l2, JLabel l3, JComboBox<String> roleSelection,
-                           JTextField fUser, JPasswordField fPass, JButton loginBut) {
         f.add(roleSelection);
         f.add(fPass); //add password
         f.add(loginBut);//adding button in JFrame
@@ -166,7 +162,10 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         addUser.addActionListener(e -> {
             JFrame g = new JFrame("Enter User Details");
 
-            JLabel l1, l2, l3;
+            JLabel l1;
+            JLabel l2;
+            JLabel l3;
+
             l1 = new JLabel("Role");
             l1.setBounds(30, 10, 100, 30);
 
@@ -288,7 +287,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         f.setLocationRelativeTo(null);
     }
 
-    //TODO: create dropdown for department
+    //TODO: create dropdown for bookDepartment
     private void addEditBook(JFrame g, String action) {
 
         JLabel l1;
@@ -334,8 +333,11 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         JTextField fBook = new JTextField();
         fBook.setBounds(120, 50, 200, 30);
 
-        JTextField fDept = new JTextField();
+        JComboBox<String> fDept = new JComboBox<>(bookDepartment);
         fDept.setBounds(120, 85, 200, 30);
+
+//        JTextField fDept = new JTextField();
+//        fDept.setBounds(120, 85, 200, 30);
 
         JTextField fAuthor = new JTextField();
         fAuthor.setBounds(120, 120, 200, 30);
@@ -361,7 +363,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
 
             String acId = fAcId.getText();
             String bookName = fBook.getText();
-            String bookDept = fDept.getText();
+            String bookDept = bookDepartment[fDept.getSelectedIndex()];
             String author = fAuthor.getText();
             String published = fPublished.getText();
             String pages = fPages.getText();
@@ -369,7 +371,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
             String price = fPrice.getText();
             String publisher = fPublisher.getText();
 
-            if (action.equals("Edit Book")) {
+            if ("Edit Book".equals(action)) {
                 if (bookService.updateBook(new Books(acId, bookName, bookDept, author, publisher, published,
                         pages, lang, price, false))) {
                     JOptionPane.showMessageDialog(null, "Book Updated",
@@ -392,9 +394,9 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         getBookDeets.setBounds(350, 15, 100, 30);
         getBookDeets.addActionListener(e -> {
             String accNo = fAcId.getText();
-            String department = fDept.getText();
+            String bookDept = bookDepartment[fDept.getSelectedIndex()];
 
-            Books book = bookService.getBookByAccNoAndDept(accNo, department);
+            Books book = bookService.getBookByAccNoAndDept(accNo, bookDept);
 
             if (book != null) {
                 fBook.setText(book.getBookName());
