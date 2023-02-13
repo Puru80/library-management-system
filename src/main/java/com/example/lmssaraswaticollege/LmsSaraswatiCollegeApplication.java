@@ -12,6 +12,8 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.print.Book;
+import java.util.Objects;
 
 @SpringBootApplication
 public class LmsSaraswatiCollegeApplication extends JFrame {
@@ -287,7 +289,6 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         f.setLocationRelativeTo(null);
     }
 
-    //TODO: create dropdown for bookDepartment
     //TODO: Testing
     private void addEditBook(JFrame g, String action) {
 
@@ -337,9 +338,6 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         JComboBox<String> fDept = new JComboBox<>(bookDepartment);
         fDept.setBounds(120, 85, 200, 30);
 
-//        JTextField fDept = new JTextField();
-//        fDept.setBounds(120, 85, 200, 30);
-
         JTextField fAuthor = new JTextField();
         fAuthor.setBounds(120, 120, 200, 30);
 
@@ -372,28 +370,44 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
             String price = fPrice.getText();
             String publisher = fPublisher.getText();
 
-            if ("Edit Book".equals(action)) {
-                if (bookService.updateBook(new Books(acId, bookName, bookDept, author, publisher, published,
-                        pages, lang, price, false))) {
-                    JOptionPane.showMessageDialog(null, "Book Updated",
-                            "Success message", JOptionPane.INFORMATION_MESSAGE);
-                    g.dispose();
-                }
+            Books book = new Books(acId, bookName, bookDept, author, publisher, published,
+                    pages, lang, price, false);
+
+            if (!bookService.isValidBook(book)) {
+                JOptionPane.showMessageDialog(null, "Check if the required information is correctly filled",
+                        "Error Message", JOptionPane.ERROR_MESSAGE);
             } else {
-                if (bookService.addBook(new Books(acId, bookName, bookDept, author, publisher, published,
-                        pages, lang, price, false))) {
-                    JOptionPane.showMessageDialog(null, "Book Added to Database",
-                            "Success message", JOptionPane.INFORMATION_MESSAGE);
-                    g.dispose();
-                } else
-                    JOptionPane.showMessageDialog(null, "Book Already Exists",
-                            "Error Message", JOptionPane.ERROR_MESSAGE);
+                if ("Edit Book".equals(action)) {
+                    if (Objects.equals(bookDept, bookDepartment[0])) {
+                        JOptionPane.showMessageDialog(null, "Check if the required information is correctly filled",
+                                "Error Message", JOptionPane.ERROR_MESSAGE);
+                        g.dispose();
+                    }
+
+                    if (bookService.updateBook(book)) {
+                        JOptionPane.showMessageDialog(null, "Book Updated",
+                                "Success message", JOptionPane.INFORMATION_MESSAGE);
+                        g.dispose();
+                    }
+
+                } else {
+                    if (bookService.addBook(new Books(acId, bookName, bookDept, author, publisher, published,
+                            pages, lang, price, false))) {
+                        JOptionPane.showMessageDialog(null, "Book Added to Database",
+                                "Success message", JOptionPane.INFORMATION_MESSAGE);
+                        g.dispose();
+                    } else
+                        JOptionPane.showMessageDialog(null, "Book Already Exists",
+                                "Error Message", JOptionPane.ERROR_MESSAGE);
+                }
             }
         });
 
         JButton getBookDeets = new JButton("Get Details");
         getBookDeets.setBounds(350, 15, 100, 30);
-        getBookDeets.addActionListener(e -> {
+        getBookDeets.addActionListener(e ->
+
+        {
             String accNo = fAcId.getText();
             String bookDept = bookDepartment[fDept.getSelectedIndex()];
 
