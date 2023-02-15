@@ -93,12 +93,25 @@ public class BookService {
     }
 
     public boolean isValidBook(Books book){
-        logger.debug("Book name: {}", book.getBookName());
-        logger.debug("Book AccNo: {}", book.getAccNo());
 
-        boolean succ = StringUtils.isBlank(book.getBookName()) && "Select Department".equals(book.getAccNo());
-        logger.debug("Book validation: {}", succ);
+        boolean isBookNameEmpty = StringUtils.isBlank(book.getBookName());
+        logger.debug("isBookNameEmpty: {}", isBookNameEmpty);
 
-        return succ;
+        if(isBookNameEmpty)
+            return false;
+
+        boolean isAccNoEmpty = StringUtils.isBlank(book.getAccNo());
+        logger.debug("isAccNoEmpty: {}", isAccNoEmpty);
+
+        if(isAccNoEmpty)
+            return false;
+
+        boolean isDepartmentInCorrect = "Select Department".equals(book.getDepartment());
+        logger.debug("isDepartmentInCorrect: {}", isDepartmentInCorrect);
+
+        if(isDepartmentInCorrect)
+            return false;
+
+        return true;
     }
 }
