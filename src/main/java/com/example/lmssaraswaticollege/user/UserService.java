@@ -1,7 +1,5 @@
 package com.example.lmssaraswaticollege.user;
 
-import com.example.lmssaraswaticollege.sequence.Sequence;
-import com.example.lmssaraswaticollege.sequence.SequenceRepository;
 import com.example.lmssaraswaticollege.sequence.SequenceService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
