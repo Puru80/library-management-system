@@ -24,7 +24,7 @@ public class Form1 extends JFrame {
             {"All Books", "All Books"},
             {"Accession No", "accNo"},
             {"Name", "bookName"},
-            {"Department", "department"},
+            {"Department", "bookDepartment"},
             {"Author", "authorName"},
             {"Publisher", "publisher"},
             {"Published In", "yearOfPub"},
@@ -87,7 +87,7 @@ public class Form1 extends JFrame {
     }
 
     private void modelAddRow(DefaultTableModel model, Books books) {
-        String AccNo = books.getAccNo();
+        String accNo = books.getAccNo();
         String name = books.getBookName();
         String dept = books.getDepartment();
         String author = books.getAuthorName();
@@ -97,7 +97,7 @@ public class Form1 extends JFrame {
         String price = books.getPrice();
         String publisher = books.getPublisher();
 
-        model.addRow(new Object[]{AccNo, name, dept, author, publisher, publishedIn, noOfPages, language, price});
+        model.addRow(new Object[]{accNo, name, dept, author, publisher, publishedIn, noOfPages, language, price});
     }
 
 

@@ -7,21 +7,22 @@ import com.example.lmssaraswaticollege.issue.IssueService;
 import com.example.lmssaraswaticollege.user.Role;
 import com.example.lmssaraswaticollege.user.User;
 import com.example.lmssaraswaticollege.user.UserService;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.util.Objects;
 
 @SpringBootApplication
-public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLineRunner {
+public class LmsSaraswatiCollegeApplication extends JFrame {
 
     private final UserService userService;
     private final BookService bookService;
     private final IssueService issueService;
 
     String[] options = {"Select Role", "ADMIN", "TEACHER", "STUDENT"};
+    String[] bookDepartment = {"Select Department", "Jaydeep Sharda Nursing", "Saraswati mahavidyalaya", "Saraswati Vidyalaya"};
 
     public LmsSaraswatiCollegeApplication(UserService userService, BookService bookService, IssueService issueService) {
         this.userService = userService;
@@ -38,9 +39,12 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
 
     public void login() {
         JFrame f = new JFrame("Login");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        JLabel l1, l2, l3;
+        JLabel l1;
+        JLabel l2;
+        JLabel l3;
+
         l1 = new JLabel("Role");
         l1.setBounds(30, 10, 100, 30);
 
@@ -53,19 +57,19 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
         JComboBox<String> roleSelection = new JComboBox<>(options);
         roleSelection.setBounds(110, 10, 200, 30);
 
-        JTextField F_user = new JTextField();
-        F_user.setBounds(110, 60, 200, 30);
+        JTextField fUser = new JTextField();
+        fUser.setBounds(110, 60, 200, 30);
 
-        JPasswordField F_pass = new JPasswordField();
-        F_pass.setBounds(110, 110, 200, 30);
+        JPasswordField fPass = new JPasswordField();
+        fPass.setBounds(110, 110, 200, 30);
 
-        JButton login_but = new JButton("Login");
-        login_but.setBounds(130, 185, 80, 25);
+        JButton loginBut = new JButton("Login");
+        loginBut.setBounds(130, 185, 80, 25);
 
-        login_but.addActionListener(e -> {
+        loginBut.addActionListener(e -> {
 
-            String username = F_user.getText();
-            String password = String.valueOf(F_pass.getPassword());
+            String username = fUser.getText();
+            String password = String.valueOf(fPass.getPassword());
             String role = options[roleSelection.getSelectedIndex()];
 
             if (role.equals("Select Role")) {
@@ -74,12 +78,11 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
                 JOptionPane.showMessageDialog(null, "Please enter username");
             } else if (password.equals("")) {
                 JOptionPane.showMessageDialog(null, "Please enter password");
-            }
-            else {
+            } else {
                 Role roleSelected;
-                if (role.equals("ADMIN"))
+                if (role.equals(options[1]))
                     roleSelected = Role.ROLE_ADMIN;
-                else if (role.equals("STUDENT"))
+                else if (role.equals(options[3]))
                     roleSelected = Role.ROLE_STUDENT;
                 else
                     roleSelected = Role.ROLE_TEACHER;
@@ -90,27 +93,21 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
                         roleSelected
                 );
 
-                if(userService.login(user)){
+                if (userService.login(user)) {
                     f.dispose();
-                    if(roleSelected.equals(Role.ROLE_ADMIN))
+                    if (roleSelected.equals(Role.ROLE_ADMIN))
                         adminMenu();
                     else
-                        user_menu();
-                }
-                else JOptionPane.showMessageDialog(null, "User does not exist");
+                        userMenu();
+                } else JOptionPane.showMessageDialog(null, "User does not exist");
 
             }
         });
 
-        setUpLogin(f, l1, l2, l3, roleSelection, F_user, F_pass, login_but);
-    }
-
-    public void setUpLogin(JFrame f, JLabel l1, JLabel l2, JLabel l3, JComboBox<String> roleSelection,
-                           JTextField f_user, JPasswordField f_pass, JButton login_but) {
         f.add(roleSelection);
-        f.add(f_pass); //add password
-        f.add(login_but);//adding button in JFrame
-        f.add(f_user);  //add user
+        f.add(fPass); //add password
+        f.add(loginBut);//adding button in JFrame
+        f.add(fUser);  //add user
         f.add(l1);  // add label1 i.e. for role
         f.add(l2); // add label2 i.e. for username
         f.add(l3); //add label3 i.e. for password
@@ -126,21 +123,21 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         //Complete
-        JButton view_but=new JButton("View Books");
-        view_but.setBounds(20,20,120,25);
-        view_but.addActionListener(e -> new Form1(bookService, true));
+        JButton viewBut = new JButton("View Books");
+        viewBut.setBounds(20, 20, 120, 25);
+        viewBut.addActionListener(e -> new Form1(bookService, true));
 
         //Complete
-        JButton users_but = new JButton("View Users");
-        users_but.setBounds(150,20,120,25);
-        users_but.addActionListener(e -> {
+        JButton usersBut = new JButton("View Users");
+        usersBut.setBounds(150, 20, 120, 25);
+        usersBut.addActionListener(e -> {
             JFrame f1 = new JFrame("Users List");
 
-            JTable user_list= new JTable();
+            JTable userList = new JTable();
             String[] columnNames = {"UID", "Username", "Password", "Role"};
             DefaultTableModel model = new DefaultTableModel(columnNames, 0);
 
-            for(User user : userService.getAllUsers()){
+            for (User user : userService.getAllUsers()) {
                 String id = user.getId().toString();
                 String userName = user.getUserName();
                 String password = user.getPassword();
@@ -149,9 +146,9 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
                 model.addRow(new Object[]{id, userName, password, role});
             }
 
-            user_list.setModel(model);
+            userList.setModel(model);
 
-            JScrollPane scrollPane = new JScrollPane(user_list);
+            JScrollPane scrollPane = new JScrollPane(userList);
 
             f1.add(scrollPane); //add scrollpane
             f1.setSize(800, 400); //set size for frame
@@ -161,12 +158,15 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
         });
 
         //Complete
-        JButton add_user = new JButton("Add User");
-        add_user.setBounds(20,60,120,25);
-        add_user.addActionListener(e -> {
+        JButton addUser = new JButton("Add User");
+        addUser.setBounds(20, 60, 120, 25);
+        addUser.addActionListener(e -> {
             JFrame g = new JFrame("Enter User Details");
 
-            JLabel l1, l2, l3;
+            JLabel l1;
+            JLabel l2;
+            JLabel l3;
+
             l1 = new JLabel("Role");
             l1.setBounds(30, 10, 100, 30);
 
@@ -179,21 +179,21 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
             JComboBox<String> roleSelection = new JComboBox<>(options);
             roleSelection.setBounds(110, 10, 200, 30);
 
-            JTextField F_user = new JTextField(); //Create text field for username
-            F_user.setBounds(110, 60, 200, 30);
+            JTextField fUser = new JTextField(); //Create text field for username
+            fUser.setBounds(110, 60, 200, 30);
 
-            JPasswordField F_pass = new JPasswordField(); //Create text field for password
-            F_pass.setBounds(110, 110, 200, 30);
+            JPasswordField fPass = new JPasswordField(); //Create text field for password
+            fPass.setBounds(110, 110, 200, 30);
 
-            JButton login_but = new JButton("Login");//creating instance of JButton for Login Button
-            login_but.setBounds(130, 185, 80, 25);//Dimensions for button
+            JButton loginBut = new JButton("Login");//creating instance of JButton for Login Button
+            loginBut.setBounds(130, 185, 80, 25);//Dimensions for button
 
-            JButton create_button = new JButton("Add Uer");//creating instance of JButton for Create
-            create_button.setBounds(130,200,80,25);//x axis, y axis, width, height
-            create_button.addActionListener(e1 -> {
-                String username = F_user.getText();
+            JButton createButton = new JButton("Add Uer");//creating instance of JButton for Create
+            createButton.setBounds(130, 200, 80, 25);//x axis, y axis, width, height
+            createButton.addActionListener(e1 -> {
+                String username = fUser.getText();
 
-                String password = "" + String.valueOf(F_pass.getPassword());
+                String password = "" + String.valueOf(fPass.getPassword());
                 String role = options[roleSelection.getSelectedIndex()];
 
                 Role roleSelected;
@@ -204,25 +204,24 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
                 else
                     roleSelected = Role.ROLE_TEACHER;
 
-                if(userService.saveUser(new User(username, password, roleSelected))){
+                if (userService.saveUser(new User(username, password, roleSelected))) {
                     JOptionPane.showMessageDialog(null, "User Saved Successfully",
-                            "Message",JOptionPane.INFORMATION_MESSAGE);
+                            "Message", JOptionPane.INFORMATION_MESSAGE);
                     g.dispose();
-                }
-                else
+                } else
                     JOptionPane.showMessageDialog(null, "User Already Exists",
                             "Save User", JOptionPane.ERROR_MESSAGE);
 
             });
 
-            g.add(create_button);
+            g.add(createButton);
             g.add(l1);
             g.add(l2);
             g.add(l3);
             g.add(roleSelection);
-            g.add(F_user);
-            g.add(F_pass);
-            g.setSize(400,300);//400 width and 500 height
+            g.add(fUser);
+            g.add(fPass);
+            g.setSize(400, 300);//400 width and 500 height
             g.setLayout(null);//using no layout managers
             g.setVisible(true);//making the frame visible
             g.setLocationRelativeTo(null);
@@ -231,9 +230,9 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
         });
 
         //Complete
-        JButton add_book=new JButton("Add Book");
-        add_book.setBounds(150,60,120,25);
-        add_book.addActionListener(e -> {
+        JButton addBook = new JButton("Add Book");
+        addBook.setBounds(150, 60, 120, 25);
+        addBook.addActionListener(e -> {
 
             JFrame g = new JFrame("Add Book");
 
@@ -241,14 +240,14 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
         });
 
         //Complete
-        JButton issue_book=new JButton("Issue Book");
-        issue_book.setBounds(280,20,160,25);
-        issue_book.addActionListener(e -> issueReturnBook("Issue Book"));
+        JButton issueBook = new JButton("Issue Book");
+        issueBook.setBounds(280, 20, 160, 25);
+        issueBook.addActionListener(e -> issueReturnBook("Issue Book"));
 
         //Complete
-        JButton return_book = new JButton("Return Book");
-        return_book.setBounds(280,60,160,25);
-        return_book.addActionListener(e -> issueReturnBook("Return Book"));
+        JButton returnBook = new JButton("Return Book");
+        returnBook.setBounds(280, 60, 160, 25);
+        returnBook.addActionListener(e -> issueReturnBook("Return Book"));
 
         //Complete
         JButton editBook = new JButton("Edit Book");
@@ -259,38 +258,38 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
             addEditBook(g, "Edit Book");
         });
 
-        f.add(return_book);
-        f.add(issue_book);
-        f.add(add_book);
-        f.add(users_but);
-        f.add(view_but);
-        f.add(add_user);
+        f.add(returnBook);
+        f.add(issueBook);
+        f.add(addBook);
+        f.add(usersBut);
+        f.add(viewBut);
+        f.add(addUser);
         f.add(editBook);
 
-        f.setSize(550,200);
+        f.setSize(550, 200);
         f.setLayout(null);
         f.setVisible(true);
         f.setLocationRelativeTo(null);
 
     }
 
-    public void user_menu() {
-        JFrame f=new JFrame("User Functions");
+    public void userMenu() {
+        JFrame f = new JFrame("User Functions");
         f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
-        JButton view_but=new JButton("View Books");
-        view_but.setBounds(20,20,120,25);
-        view_but.addActionListener(e -> new Form1(bookService, false));
+        JButton viewBut = new JButton("View Books");
+        viewBut.setBounds(20, 20, 120, 25);
+        viewBut.addActionListener(e -> new Form1(bookService, false));
 
-        f.add(view_but);
-        f.setSize(300,100);
+        f.add(viewBut);
+        f.setSize(300, 100);
         f.setLayout(null);
         f.setVisible(true);
         f.setLocationRelativeTo(null);
     }
 
-    //Complete
-    private void addEditBook(JFrame g, String action){
+    //TODO: Testing
+    private void addEditBook(JFrame g, String action) {
 
         JLabel l1;
         JLabel l2;
@@ -301,120 +300,135 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
         JLabel l7;
         JLabel l8;
         JLabel l9;
-        l1=new JLabel("Accession Id");
-        l1.setBounds(30,15, 125,30);
+
+        l1 = new JLabel("Accession Id");
+        l1.setBounds(30, 15, 125, 30);
 
         l2 = new JLabel("Book Name");
-        l2.setBounds(30,50, 125,30);
+        l2.setBounds(30, 50, 125, 30);
 
         l3 = new JLabel("Department");
         l3.setBounds(30, 85, 125, 30);
 
         l4 = new JLabel("Author Name");
-        l4.setBounds(30,120, 125,30);
+        l4.setBounds(30, 120, 125, 30);
 
         l9 = new JLabel("Publisher");
-        l9.setBounds(30,155, 125,30);
+        l9.setBounds(30, 155, 125, 30);
 
         l5 = new JLabel("Year Published");
-        l5.setBounds(30,190, 125,30);
+        l5.setBounds(30, 190, 125, 30);
 
         l6 = new JLabel("Pages");
-        l6.setBounds(30,225, 125,30);
+        l6.setBounds(30, 225, 125, 30);
 
         l7 = new JLabel("Language");
-        l7.setBounds(30,260, 125,30);
+        l7.setBounds(30, 260, 125, 30);
 
         l8 = new JLabel("Price");
-        l8.setBounds(30,295, 125,30);
+        l8.setBounds(30, 295, 125, 30);
 
-        JTextField F_acId = new JTextField();
-        F_acId.setBounds(120, 15, 200, 30);
+        JTextField fAcId = new JTextField();
+        fAcId.setBounds(120, 15, 200, 30);
 
-        JTextField F_book =new JTextField();
-        F_book.setBounds(120, 50, 200, 30);
+        JTextField fBook = new JTextField();
+        fBook.setBounds(120, 50, 200, 30);
 
-        JTextField F_dept = new JTextField();
-        F_dept.setBounds(120, 85, 200, 30);
+        JComboBox<String> fDept = new JComboBox<>(bookDepartment);
+        fDept.setBounds(120, 85, 200, 30);
 
-        JTextField F_author =new JTextField();
-        F_author.setBounds(120,120, 200,30);
+        JTextField fAuthor = new JTextField();
+        fAuthor.setBounds(120, 120, 200, 30);
 
-        JTextField F_publisher = new JTextField();
-        F_publisher.setBounds(120,155, 200,30);
+        JTextField fPublisher = new JTextField();
+        fPublisher.setBounds(120, 155, 200, 30);
 
-        JTextField F_published =new JTextField();
-        F_published.setBounds(120, 190, 200, 30);
+        JTextField fPublished = new JTextField();
+        fPublished.setBounds(120, 190, 200, 30);
 
-        JTextField F_pages =new JTextField();
-        F_pages.setBounds(120, 225, 200, 30);
+        JTextField fPages = new JTextField();
+        fPages.setBounds(120, 225, 200, 30);
 
-        JTextField F_language =new JTextField();
-        F_language.setBounds(120, 260, 200, 30);
+        JTextField fLanguage = new JTextField();
+        fLanguage.setBounds(120, 260, 200, 30);
 
-        JTextField F_price =new JTextField();
-        F_price.setBounds(120, 295, 200, 30);
+        JTextField fPrice = new JTextField();
+        fPrice.setBounds(120, 295, 200, 30);
 
-        JButton create_but=new JButton("Submit");
-        create_but.setBounds(130,330,80,25);
-        create_but.addActionListener(e12 -> {
+        JButton createBut = new JButton("Submit");
+        createBut.setBounds(130, 330, 80, 25);
+        createBut.addActionListener(e12 -> {
 
-            String acId = F_acId.getText();
-            String bookName = F_book.getText();
-            String bookDept = F_dept.getText();
-            String author = F_author.getText();
-            String published = F_published.getText();
-            String pages = F_pages.getText();
-            String lang = F_language.getText();
-            String price = F_price.getText();
-            String publisher = F_publisher.getText();
+            String acId = fAcId.getText();
+            String bookName = fBook.getText();
+            String bookDept = bookDepartment[fDept.getSelectedIndex()];
+            String author = fAuthor.getText();
+            String published = fPublished.getText();
+            String pages = fPages.getText();
+            String lang = fLanguage.getText();
+            String price = fPrice.getText();
+            String publisher = fPublisher.getText();
 
-            if(action.equals("Edit Book")){
-                if(bookService.updateBook(new Books(acId, bookName, bookDept, author, publisher, published,
-                        pages, lang, price, false))) {
-                    JOptionPane.showMessageDialog(null, "Book Updated",
-                            "Success message", JOptionPane.INFORMATION_MESSAGE);
-                    g.dispose();
+            Books book = new Books(acId, bookName, bookDept, author, publisher, published,
+                    pages, lang, price, false);
+
+            if (!bookService.isValidBook(book)) {
+                JOptionPane.showMessageDialog(null, "Check if the required information is correctly filled",
+                        "Error Message", JOptionPane.ERROR_MESSAGE);
+            } else {
+                if ("Edit Book".equals(action)) {
+                    if (Objects.equals(bookDept, bookDepartment[0])) {
+                        JOptionPane.showMessageDialog(null, "Check if the required information is correctly filled",
+                                "Error Message", JOptionPane.ERROR_MESSAGE);
+                        g.dispose();
+                    }
+
+                    if (bookService.updateBook(book)) {
+                        JOptionPane.showMessageDialog(null, "Book Updated",
+                                "Success message", JOptionPane.INFORMATION_MESSAGE);
+                        g.dispose();
+                    }
+
+                } else {
+                    if (bookService.addBook(new Books(acId, bookName, bookDept, author, publisher, published,
+                            pages, lang, price, false))) {
+                        JOptionPane.showMessageDialog(null, "Book Added to Database",
+                                "Success message", JOptionPane.INFORMATION_MESSAGE);
+                        g.dispose();
+                    } else
+                        JOptionPane.showMessageDialog(null, "Book Already Exists",
+                                "Error Message", JOptionPane.ERROR_MESSAGE);
                 }
-            }
-            else {
-                if (bookService.addBook(new Books(acId, bookName, bookDept, author, publisher, published,
-                        pages, lang, price, false))) {
-                    JOptionPane.showMessageDialog(null, "Book Added to Database",
-                            "Success message", JOptionPane.INFORMATION_MESSAGE);
-                    g.dispose();
-                } else
-                    JOptionPane.showMessageDialog(null, "Book Already Exists",
-                            "Error Message", JOptionPane.ERROR_MESSAGE);
             }
         });
 
         JButton getBookDeets = new JButton("Get Details");
         getBookDeets.setBounds(350, 15, 100, 30);
-        getBookDeets.addActionListener(e -> {
-            String accNo = F_acId.getText();
-            String department = F_dept.getText();
+        getBookDeets.addActionListener(e ->
 
-            Books book = bookService.getBookByAccNoAndDept(accNo, department);
+        {
+            String accNo = fAcId.getText();
+            String bookDept = bookDepartment[fDept.getSelectedIndex()];
 
-            if(book != null) {
-                F_book.setText(book.getBookName());
-                F_author.setText(book.getAuthorName());
-                F_language.setText(book.getLanguage());
-                F_pages.setText(String.valueOf(book.getNoOfPages()));
-                F_price.setText(String.valueOf(book.getPrice()));
-                F_published.setText(book.getYearOfPub());
-                F_publisher.setText(book.getPublisher());
-                create_but.setEnabled(true);
-            }
-            else
+            Books book = bookService.getBookByAccNoAndDept(accNo, bookDept);
+
+            if (book != null) {
+                fBook.setText(book.getBookName());
+                fAuthor.setText(book.getAuthorName());
+                fLanguage.setText(book.getLanguage());
+                fPages.setText(String.valueOf(book.getNoOfPages()));
+                fPrice.setText(String.valueOf(book.getPrice()));
+                fPublished.setText(book.getYearOfPub());
+                fPublisher.setText(book.getPublisher());
+                createBut.setEnabled(true);
+            } else
                 JOptionPane.showMessageDialog(null, "Book Does Not Exist",
                         "Error Message", JOptionPane.ERROR_MESSAGE);
 
         });
 
-        if(action.equals("Edit Book")){
-            create_but.setEnabled(false);
+        if (action.equals("Edit Book")) {
+            createBut.setEnabled(false);
             g.add(getBookDeets);
         }
 
@@ -428,51 +442,53 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
         g.add(l8);
         g.add(l9);
 
-        g.add(F_acId);
-        g.add(F_dept);
-        g.add(F_book);
-        g.add(F_author);
-        g.add(F_price);
-        g.add(F_language);
-        g.add(F_pages);
-        g.add(F_published);
-        g.add(F_publisher);
+        g.add(fAcId);
+        g.add(fDept);
+        g.add(fBook);
+        g.add(fAuthor);
+        g.add(fPrice);
+        g.add(fLanguage);
+        g.add(fPages);
+        g.add(fPublished);
+        g.add(fPublisher);
 
-        g.add(create_but);
-        create_but.setVisible(true);
+        g.add(createBut);
+        createBut.setVisible(true);
 
-        g.setSize(600,500);
+        g.setSize(600, 500);
         g.setLayout(null);
         g.setVisible(true);
         g.setLocationRelativeTo(null);
     }
 
     //Complete
-    private void issueReturnBook(String action){
+    private void issueReturnBook(String action) {
         JFrame g = new JFrame("Enter Details");
 
-        JLabel l1, l2;
+        JLabel l1;
+        JLabel l2;
+
         l1 = new JLabel("Accession ID");
-        l1.setBounds(30,15, 100,30);
+        l1.setBounds(30, 15, 100, 30);
 
         l2 = new JLabel("Department");
         l2.setBounds(30, 80, 100, 30);
 
-        JTextField F_bid = new JTextField();
-        F_bid.setBounds(110, 15, 200, 30);
+        JTextField fBid = new JTextField();
+        fBid.setBounds(110, 15, 200, 30);
 
-        JTextField F_dept = new JTextField();
-        F_dept.setBounds(110, 80, 200, 30);
+        JTextField fDept = new JTextField();
+        fDept.setBounds(110, 80, 200, 30);
 
-        JButton create_but;
-        create_but = new JButton(action);
-        create_but.setBounds(50,170,200,25);
+        JButton createBut;
+        createBut = new JButton(action);
+        createBut.setBounds(50, 170, 200, 25);
 
-        if(action.equals("Issue Book")) {
-            create_but.addActionListener(e13 -> {
+        if (action.equals("Issue Book")) {
+            createBut.addActionListener(e13 -> {
 
-                String bid = F_bid.getText();
-                String dept = F_dept.getText();
+                String bid = fBid.getText();
+                String dept = fDept.getText();
 
                 if (issueService.issueBook(new Issue(bid, dept))) {
                     JOptionPane.showMessageDialog(null, "Book Issued",
@@ -483,18 +499,16 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
                             "Error Message", JOptionPane.ERROR_MESSAGE);
 
             });
-        }
-        else{
-            create_but.addActionListener(e14 -> {
-                String acID = F_bid.getText();
-                String dept = F_dept.getText();
+        } else {
+            createBut.addActionListener(e14 -> {
+                String acID = fBid.getText();
+                String dept = fDept.getText();
 
-                if(issueService.returnBook(acID, dept)) {
+                if (issueService.returnBook(acID, dept)) {
                     JOptionPane.showMessageDialog(null, "Book Returned",
                             "Message", JOptionPane.INFORMATION_MESSAGE);
                     g.dispose();
-                }
-                else
+                } else
                     JOptionPane.showMessageDialog(null, "Book Not Issued",
                             "Message", JOptionPane.ERROR_MESSAGE);
 
@@ -502,27 +516,27 @@ public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLin
         }
 
 
-        g.add(F_bid);
-        g.add(create_but);
+        g.add(fBid);
+        g.add(createBut);
         g.add(l1);
-        g.add(F_dept);
+        g.add(fDept);
         g.add(l2);
 
-        g.setSize(350,350);
+        g.setSize(350, 350);
         g.setLayout(null);
         g.setVisible(true);
         g.setLocationRelativeTo(null);
     }
 
     //TODO: Complete method
-    private void loginAddUser(String action){
+    private void loginAddUser(String action) {
 
     }
 
-    @Override
+   /* @Override
     public void run(String... args) throws Exception {
         System.out.println("Application Started");
 
         userService.saveUser(new User("Admin", "admin", Role.ROLE_ADMIN));
-    }
+    }*/
 }

@@ -1,6 +1,9 @@
 package com.example.lmssaraswaticollege.books;
 
 import lombok.AllArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -12,6 +15,8 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 public class BookService {
+
+    private static final Logger logger = LoggerFactory.getLogger(BookService.class);
 
     private final BookRepository bookRepository;
     private MongoTemplate mongoTemplate;
@@ -43,6 +48,7 @@ public class BookService {
         Query query = new Query();
         query.addCriteria(Criteria.where("accNo").is(book.getAccNo()).and("department").
                 is(book.getDepartment()));
+
         Update update = new Update();
         update.set("bookName", book.getBookName());
         update.set("authorName", book.getAuthorName());
@@ -51,6 +57,7 @@ public class BookService {
         update.set("noOfPages", book.getNoOfPages());
         update.set("language", book.getLanguage());
         update.set("price", book.getPrice());
+
         mongoTemplate.upsert(query, update, Books.class);
 
         return true;
@@ -83,5 +90,28 @@ public class BookService {
         query = new Query();
         query.addCriteria(Criteria.where(field).is(queryString));
         return mongoTemplate.find(query, Books.class);
+    }
+
+    public boolean isValidBook(Books book){
+
+        boolean isBookNameEmpty = StringUtils.isBlank(book.getBookName());
+        logger.debug("isBookNameEmpty: {}", isBookNameEmpty);
+
+        if(isBookNameEmpty)
+            return false;
+
+        boolean isAccNoEmpty = StringUtils.isBlank(book.getAccNo());
+        logger.debug("isAccNoEmpty: {}", isAccNoEmpty);
+
+        if(isAccNoEmpty)
+            return false;
+
+        boolean isDepartmentInCorrect = "Select Department".equals(book.getDepartment());
+        logger.debug("isDepartmentInCorrect: {}", isDepartmentInCorrect);
+
+        if(isDepartmentInCorrect)
+            return false;
+
+        return true;
     }
 }
