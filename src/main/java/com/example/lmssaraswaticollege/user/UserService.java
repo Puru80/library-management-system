@@ -2,19 +2,21 @@ package com.example.lmssaraswaticollege.user;
 
 import com.example.lmssaraswaticollege.sequence.Sequence;
 import com.example.lmssaraswaticollege.sequence.SequenceRepository;
+import com.example.lmssaraswaticollege.sequence.SequenceService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @Service
 @AllArgsConstructor
-public class UserService {
+public class UserService implements Serializable {
 
     private final UserRepository userRepository;
-    private final SequenceRepository sequenceRepository;
+    private final SequenceService sequenceService;
 
     public boolean saveUser(User user){
         AtomicBoolean success = new AtomicBoolean(false);
@@ -25,15 +27,11 @@ public class UserService {
         );
 
         if(!success.get()) {
-            Sequence seq = sequenceRepository.getById(1L);
-            Long count = seq.getSequenceValue();
+            Long nextSeq = sequenceService.getNextSequenceValue();
 
-            user.setId(++count);
+            user.setId(nextSeq);
 
             userRepository.insert(user);
-
-            seq.setSequenceValue(count);
-            sequenceRepository.save(seq);
         }
 
         return !success.get();

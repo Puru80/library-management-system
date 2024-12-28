@@ -7,6 +7,7 @@ import com.example.lmssaraswaticollege.issue.IssueService;
 import com.example.lmssaraswaticollege.user.Role;
 import com.example.lmssaraswaticollege.user.User;
 import com.example.lmssaraswaticollege.user.UserService;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 
@@ -14,7 +15,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 @SpringBootApplication
-public class LmsSaraswatiCollegeApplication extends JFrame {
+public class LmsSaraswatiCollegeApplication extends JFrame implements CommandLineRunner {
 
     private final UserService userService;
     private final BookService bookService;
@@ -92,7 +93,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
                 if(userService.login(user)){
                     f.dispose();
                     if(roleSelected.equals(Role.ROLE_ADMIN))
-                        admin_menu();
+                        adminMenu();
                     else
                         user_menu();
                 }
@@ -120,9 +121,9 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
         f.setLocationRelativeTo(null);
     }
 
-    public void admin_menu() {
+    public void adminMenu() {
         JFrame f = new JFrame("Admin Functions");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         //Complete
         JButton view_but=new JButton("View Books");
@@ -275,7 +276,7 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
 
     public void user_menu() {
         JFrame f=new JFrame("User Functions");
-        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         JButton view_but=new JButton("View Books");
         view_but.setBounds(20,20,120,25);
@@ -291,7 +292,15 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
     //Complete
     private void addEditBook(JFrame g, String action){
 
-        JLabel l1,l2,l3, l4, l5, l6, l7, l8, l9;
+        JLabel l1;
+        JLabel l2;
+        JLabel l3;
+        JLabel l4;
+        JLabel l5;
+        JLabel l6;
+        JLabel l7;
+        JLabel l8;
+        JLabel l9;
         l1=new JLabel("Accession Id");
         l1.setBounds(30,15, 125,30);
 
@@ -508,5 +517,12 @@ public class LmsSaraswatiCollegeApplication extends JFrame {
     //TODO: Complete method
     private void loginAddUser(String action){
 
+    }
+
+    @Override
+    public void run(String... args) throws Exception {
+        System.out.println("Application Started");
+
+        userService.saveUser(new User("Admin", "admin", Role.ROLE_ADMIN));
     }
 }
